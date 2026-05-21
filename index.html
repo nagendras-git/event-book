@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=cover"/>
+<title>Event Book</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Event Book">
+<meta name="theme-color" content="#0f0718">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0f0718;--sf:#160e24;--sf2:#1e1230;--sf3:#271a3c;
+  --bd:rgba(180,120,255,0.15);--bd2:rgba(180,120,255,0.1);
+  --t1:#f0eaff;--t2:#c9b8e8;--t3:#9880c0;
+  --pur:#a855f7;--pur2:#7c3aed;--pink:#ec4899;--gold:#f59e0b;
+  --grd:linear-gradient(135deg,#7c3aed,#ec4899);
+  --grd2:linear-gradient(135deg,#f59e0b,#ec4899);
+  --grd3:linear-gradient(135deg,#06b6d4,#7c3aed);
+  --nav-h:68px;--sb:env(safe-area-inset-bottom,0px);
+  --sat:env(safe-area-inset-top,0px);
+  --hdr-h:calc(var(--sat)+64px);
+  --r:14px;--rl:18px;--rx:24px;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --shadow:0 8px 32px rgba(0,0,0,.45);
+  --glow:0 0 40px rgba(168,85,247,.25);
+}
+[data-theme="light"]{
+  --bg:#f5f0ff;--sf:#fff;--sf2:#faf6ff;--sf3:#f0e8ff;
+  --bd:rgba(120,60,180,0.12);--bd2:rgba(120,60,180,0.08);
+  --t1:#1a0a2e;--t2:#5a3a7a;--t3:#8a6aaa;
+  --shadow:0 8px 32px rgba(100,50,150,.12);
+  --glow:0 0 40px rgba(168,85,247,.12);
+}
+[data-theme="light"] .hdr{background:rgba(245,240,255,.95)!important}
+[data-theme="light"] .tbar{background:rgba(245,240,255,.95)!important}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);color:var(--t1);
+  -webkit-font-smoothing:antialiased;
+}
+.app{display:flex;flex-direction:column;height:100%;height:100dvh;overflow:hidden}
+
+/* HEADER */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  padding:calc(var(--sat)+12px) 16px 12px;
+  background:rgba(15,7,24,.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-logo{
+  width:36px;height:36px;border-radius:10px;
+  background:var(--grd);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;box-shadow:var(--glow);
+}
+.hdr-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600;letter-spacing:.01em}
+.hdr-title span{background:var(--grd);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-right{display:flex;gap:8px}
+.hdr-btn{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);
+  background:var(--sf2);display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;transition:all .2s var(--ease);
+}
+.hdr-btn:active{transform:scale(.92)}
+
+/* PAGES */
+.pages{flex:1;overflow:hidden;position:relative}
+.page{
+  position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  padding-bottom:calc(var(--nav-h) + var(--sb) + 24px);
+  display:none;
+  scroll-behavior:smooth;
+}
+.page.active{display:block}
+.page::-webkit-scrollbar{display:none}
+
+/* NAV BAR */
+.tbar{
+  position:sticky;bottom:0;z-index:50;
+  padding:8px 4px calc(8px + var(--sb));
+  background:rgba(15,7,24,.96);
+  backdrop-filter:blur(20px);
+  border-top:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-around;
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:3px;cursor:pointer;padding:6px 4px;
+  transition:all .2s var(--ease);border-radius:12px;
+}
+.nav-item:active{transform:scale(.9)}
+.nav-icon{font-size:22px;line-height:1;transition:transform .3s var(--spring)}
+.nav-label{font-size:.6rem;font-weight:500;letter-spacing:.04em;color:var(--t3);transition:color .2s}
+.nav-item.active .nav-icon{transform:scale(1.15)}
+.nav-item.active .nav-label{color:var(--pur)}
+
+/* HERO SECTION */
+.hero-section{padding:16px 16px 8px}
+.hero-greeting{font-size:.8rem;color:var(--t3);margin-bottom:4px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.hero-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;margin-bottom:16px;line-height:1.2}
+
+/* CAROUSEL */
+.carousel-wrap{position:relative;overflow:hidden;margin:0 -16px;padding:0 16px}
+.carousel{
+  display:flex;gap:12px;overflow-x:auto;
+  padding:4px 16px 12px;margin:0 -16px;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+}
+.carousel::-webkit-scrollbar{display:none}
+.carousel-dots{display:flex;justify-content:center;gap:5px;margin-top:4px}
+.carousel-dot{width:6px;height:6px;border-radius:50%;background:var(--bd);transition:all .3s var(--ease)}
+.carousel-dot.active{width:18px;border-radius:3px;background:var(--pur)}
+
+/* HERO CARD */
+.hero-card{
+  min-width:calc(100vw - 64px);max-width:340px;
+  border-radius:var(--rx);padding:20px;
+  background:var(--sf2);border:1px solid var(--bd);
+  scroll-snap-align:start;position:relative;overflow:hidden;
+  box-shadow:var(--shadow);
+  animation:slideIn .4s var(--ease) both;
+}
+.hero-card.birthday{background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(236,72,153,.2)),var(--sf2)}
+.hero-card.anniversary{background:linear-gradient(135deg,rgba(245,158,11,.25),rgba(236,72,153,.2)),var(--sf2)}
+.hero-card.upcoming{background:linear-gradient(135deg,rgba(6,182,212,.2),rgba(124,58,237,.2)),var(--sf2)}
+.hero-card-glow{
+  position:absolute;top:-30px;right:-30px;width:120px;height:120px;
+  border-radius:50%;opacity:.3;filter:blur(30px);
+}
+.birthday .hero-card-glow{background:radial-gradient(#a855f7,transparent)}
+.anniversary .hero-card-glow{background:radial-gradient(#f59e0b,transparent)}
+.upcoming .hero-card-glow{background:radial-gradient(#06b6d4,transparent)}
+.hero-card-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.hero-avatar{
+  width:56px;height:56px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;font-weight:700;color:#fff;
+  flex-shrink:0;position:relative;overflow:hidden;
+}
+.hero-avatar img{width:100%;height:100%;object-fit:cover;border-radius:16px}
+.hero-card-info{flex:1}
+.hero-event-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.62rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 8px;border-radius:20px;margin-bottom:6px;
+}
+.badge-birthday{background:rgba(168,85,247,.2);color:#c084fc}
+.badge-anniversary{background:rgba(245,158,11,.2);color:#fcd34d}
+.badge-upcoming{background:rgba(6,182,212,.2);color:#67e8f9}
+.hero-name{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:600;line-height:1.2}
+.hero-sub{font-size:.78rem;color:var(--t3);margin-top:3px}
+.hero-days-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.25);
+  border-radius:20px;padding:5px 12px;font-size:.75rem;font-weight:600;color:var(--pur);
+  margin-bottom:14px;
+}
+.hero-days-chip.today{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.3);color:#4ade80}
+.hero-wish-btn{
+  width:100%;padding:11px;border-radius:12px;border:none;cursor:pointer;
+  background:var(--grd);color:#fff;font-family:'DM Sans',sans-serif;
+  font-size:.85rem;font-weight:600;letter-spacing:.02em;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all .2s var(--ease);box-shadow:0 4px 15px rgba(168,85,247,.35);
+}
+.hero-wish-btn:active{transform:scale(.97)}
+.confetti-container{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.confetti-piece{
+  position:absolute;width:6px;height:6px;border-radius:1px;
+  animation:confettiFall linear infinite;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(-10px) rotate(0deg);opacity:1}
+  100%{transform:translateY(200px) rotate(720deg);opacity:0}
+}
+
+/* EMPTY STATE */
+.empty-hero{
+  min-width:calc(100vw - 64px);max-width:340px;
+  border-radius:var(--rx);padding:28px 20px;
+  background:var(--sf2);border:1px solid var(--bd);
+  text-align:center;
+}
+.empty-hero-emoji{font-size:2.5rem;margin-bottom:10px}
+.empty-hero-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;margin-bottom:6px}
+.empty-hero-sub{font-size:.78rem;color:var(--t3);line-height:1.5}
+
+/* SECTION LABEL */
+.section-label{
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3);padding:0 16px;margin:20px 0 10px;
+}
+
+/* UPCOMING MINI */
+.upcoming-list{padding:0 16px;display:flex;flex-direction:column;gap:10px}
+.upcoming-card{
+  background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);
+  padding:12px 14px;display:flex;align-items:center;gap:12px;
+  transition:all .2s var(--ease);
+}
+.upcoming-card:active{transform:scale(.98)}
+.upcoming-avatar-sm{
+  width:42px;height:42px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:700;color:#fff;overflow:hidden;
+}
+.upcoming-avatar-sm img{width:100%;height:100%;object-fit:cover;border-radius:12px}
+.upcoming-info{flex:1}
+.upcoming-name{font-size:.88rem;font-weight:600}
+.upcoming-meta{font-size:.72rem;color:var(--t3);margin-top:2px}
+.upcoming-days{font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:20px;flex-shrink:0}
+.days-today{background:rgba(34,197,94,.15);color:#4ade80}
+.days-soon{background:rgba(168,85,247,.15);color:#c084fc}
+.days-normal{background:var(--sf3);color:var(--t3)}
+
+/* CATEGORIES PAGE */
+.cat-page-top{padding:16px 16px 8px}
+.search-bar{
+  display:flex;align-items:center;gap:8px;
+  background:var(--sf2);border:1px solid var(--bd);border-radius:12px;
+  padding:10px 14px;margin-bottom:12px;
+}
+.search-bar input{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--t1);font-family:'DM Sans',sans-serif;font-size:.9rem;
+}
+.search-bar input::placeholder{color:var(--t3)}
+.search-icon{font-size:16px;color:var(--t3)}
+.sort-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:4px}
+.sort-chips::-webkit-scrollbar{display:none}
+.sort-chip{
+  flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:.72rem;font-weight:600;
+  border:1px solid var(--bd);background:var(--sf2);color:var(--t2);cursor:pointer;
+  transition:all .15s;
+}
+.sort-chip.active{background:rgba(168,85,247,.2);border-color:rgba(168,85,247,.4);color:var(--pur)}
+
+/* ACCORDION */
+.accordion-wrap{padding:0 16px;display:flex;flex-direction:column;gap:10px}
+.accordion{
+  background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rl);
+  overflow:hidden;transition:all .3s var(--ease);
+}
+.accordion-header{
+  display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;
+  user-select:none;
+}
+.accordion-icon{font-size:20px;flex-shrink:0}
+.accordion-label-wrap{flex:1}
+.accordion-title{font-size:.9rem;font-weight:600}
+.accordion-count{font-size:.72rem;color:var(--t3);margin-top:1px}
+.accordion-caret{
+  font-size:12px;color:var(--t3);transition:transform .3s var(--ease);
+  flex-shrink:0;
+}
+.accordion.open .accordion-caret{transform:rotate(180deg)}
+.accordion-body{
+  max-height:0;overflow:hidden;transition:max-height .4s var(--ease);
+}
+.accordion.open .accordion-body{max-height:2000px}
+.accordion-inner{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px}
+
+/* PERSON CARD */
+.person-card{
+  background:var(--sf3);border:1px solid var(--bd2);border-radius:12px;
+  padding:12px;display:flex;align-items:center;gap:10px;
+  transition:all .2s var(--ease);
+}
+.person-card:active{transform:scale(.98)}
+.person-avatar{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;
+}
+.person-avatar img{width:100%;height:100%;object-fit:cover;border-radius:12px}
+.person-info{flex:1;min-width:0}
+.person-name{font-size:.88rem;font-weight:600}
+.person-details{font-size:.7rem;color:var(--t3);margin-top:2px;line-height:1.4}
+.person-tag{
+  display:inline-block;font-size:.6rem;font-weight:600;letter-spacing:.04em;
+  padding:2px 6px;border-radius:10px;margin-top:3px;
+}
+.person-actions{display:flex;gap:6px;flex-shrink:0}
+.action-btn{
+  width:32px;height:32px;border-radius:9px;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  transition:all .15s var(--ease);
+}
+.action-btn:active{transform:scale(.88)}
+.btn-wa{background:rgba(37,211,102,.15);color:#25d366}
+.btn-edit{background:rgba(59,130,246,.15);color:#60a5fa}
+.btn-del{background:rgba(239,68,68,.12);color:#f87171}
+
+/* FAB */
+.fab{
+  position:fixed;bottom:calc(var(--nav-h) + var(--sb) + 16px);right:16px;z-index:40;
+  width:52px;height:52px;border-radius:16px;border:none;cursor:pointer;
+  background:var(--grd);color:#fff;font-size:24px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 24px rgba(168,85,247,.5);
+  transition:all .2s var(--spring);
+}
+.fab:active{transform:scale(.9)}
+
+/* CALENDAR PAGE */
+.cal-page{padding:16px}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cal-month{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:600}
+.cal-nav-btn{
+  width:34px;height:34px;border-radius:10px;border:1px solid var(--bd);
+  background:var(--sf2);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:14px;color:var(--t2);transition:all .15s;
+}
+.cal-nav-btn:active{transform:scale(.9)}
+.cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:2px;
+  text-align:center;
+}
+.cal-dow{font-size:.62rem;font-weight:700;color:var(--t3);padding:4px 0;letter-spacing:.04em}
+.cal-day{
+  aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-radius:10px;cursor:pointer;font-size:.82rem;font-weight:500;
+  transition:all .15s;position:relative;gap:2px;
+}
+.cal-day:active{transform:scale(.88)}
+.cal-day.empty{cursor:default}
+.cal-day.today{background:rgba(168,85,247,.2);color:var(--pur);font-weight:700}
+.cal-day.has-event::after{
+  content:'';position:absolute;bottom:3px;
+  width:4px;height:4px;border-radius:50%;background:var(--pur);
+}
+.cal-day.has-birthday::after{background:var(--pink)}
+.cal-day.has-anniversary::after{background:var(--gold)}
+.cal-events-list{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.cal-event-item{
+  background:var(--sf2);border:1px solid var(--bd);border-radius:12px;
+  padding:12px 14px;display:flex;align-items:center;gap:12px;
+}
+.cal-event-dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+}
+
+/* SETTINGS PAGE */
+.settings-page{padding:16px;display:flex;flex-direction:column;gap:16px}
+.settings-section{
+  background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rl);
+  overflow:hidden;
+}
+.settings-section-title{
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3);padding:14px 16px 8px;
+}
+.settings-row{
+  display:flex;align-items:center;gap:12px;padding:13px 16px;
+  border-top:1px solid var(--bd2);cursor:pointer;transition:all .15s;
+}
+.settings-row:first-of-type{border-top:none}
+.settings-row:active{background:var(--sf3)}
+.settings-row-icon{font-size:20px;width:28px;text-align:center}
+.settings-row-label{flex:1;font-size:.88rem;font-weight:500}
+.settings-row-value{font-size:.8rem;color:var(--t3)}
+.toggle{
+  width:44px;height:24px;border-radius:12px;
+  background:var(--sf3);border:1px solid var(--bd);
+  position:relative;cursor:pointer;transition:background .25s;flex-shrink:0;
+}
+.toggle.on{background:var(--grd);border-color:transparent}
+.toggle::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:18px;height:18px;border-radius:9px;background:#fff;
+  transition:transform .25s var(--spring);box-shadow:0 1px 4px rgba(0,0,0,.2);
+}
+.toggle.on::after{transform:translateX(20px)}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease);
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  width:100%;max-height:90vh;border-radius:var(--rx) var(--rx) 0 0;
+  background:var(--sf);border:1px solid var(--bd);border-bottom:none;
+  transform:translateY(100%);transition:transform .4s var(--ease);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-drag{width:36px;height:4px;border-radius:2px;background:var(--bd);margin:10px auto 0;flex-shrink:0}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-bottom:1px solid var(--bd);flex-shrink:0;
+}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600}
+.modal-close{
+  width:30px;height:30px;border-radius:8px;border:none;
+  background:var(--sf3);color:var(--t2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.modal-body{flex:1;overflow-y:auto;padding:16px 20px 24px}
+.modal-body::-webkit-scrollbar{display:none}
+
+/* FORM */
+.form-group{margin-bottom:14px}
+.form-label{font-size:.75rem;font-weight:600;color:var(--t3);letter-spacing:.04em;margin-bottom:5px;display:block}
+.form-input{
+  width:100%;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;
+  padding:11px 13px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:.9rem;
+  outline:none;transition:border-color .2s;
+}
+.form-input:focus{border-color:rgba(168,85,247,.5)}
+.form-input::placeholder{color:var(--t3)}
+.form-select{appearance:none;cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.photo-upload{
+  width:100%;height:90px;border:2px dashed var(--bd);border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;cursor:pointer;font-size:.78rem;color:var(--t3);
+  transition:all .2s;
+}
+.photo-upload:active{background:var(--sf2)}
+.photo-upload-icon{font-size:28px}
+.photo-preview{width:90px;height:90px;border-radius:12px;object-fit:cover;border:2px solid var(--bd)}
+.phone-row{display:flex;gap:8px}
+.country-code{
+  flex-shrink:0;width:72px;background:var(--sf2);border:1px solid var(--bd);
+  border-radius:10px;padding:11px 8px;color:var(--t1);
+  font-family:'DM Sans',sans-serif;font-size:.88rem;text-align:center;
+  appearance:none;outline:none;cursor:pointer;
+}
+.age-display{
+  display:flex;align-items:center;gap:6px;padding:8px 12px;
+  background:rgba(168,85,247,.1);border-radius:8px;font-size:.8rem;
+  color:var(--pur);font-weight:500;margin-top:5px;
+}
+.form-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.btn-cancel{
+  padding:12px;border-radius:12px;border:1px solid var(--bd);
+  background:var(--sf2);color:var(--t2);font-family:'DM Sans',sans-serif;
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .15s;
+}
+.btn-save{
+  padding:12px;border-radius:12px;border:none;
+  background:var(--grd);color:#fff;font-family:'DM Sans',sans-serif;
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .15s;
+  box-shadow:0 4px 14px rgba(168,85,247,.35);
+}
+.btn-save:active,.btn-cancel:active{transform:scale(.97)}
+
+/* WISH MODAL */
+.wish-modal{max-height:85vh}
+.tone-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.tone-chip{
+  padding:6px 13px;border-radius:20px;font-size:.75rem;font-weight:600;
+  border:1px solid var(--bd);background:var(--sf2);color:var(--t2);cursor:pointer;
+  transition:all .15s;
+}
+.tone-chip.active{background:rgba(168,85,247,.2);border-color:rgba(168,85,247,.4);color:var(--pur)}
+.wish-text{
+  width:100%;min-height:100px;background:var(--sf2);border:1px solid var(--bd);
+  border-radius:12px;padding:12px;color:var(--t1);
+  font-family:'DM Sans',sans-serif;font-size:.88rem;line-height:1.5;
+  resize:none;outline:none;transition:border-color .2s;
+}
+.wish-text:focus{border-color:rgba(168,85,247,.5)}
+.wish-send-btn{
+  width:100%;padding:14px;border-radius:12px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:14px;box-shadow:0 4px 14px rgba(37,211,102,.35);
+  transition:all .15s var(--ease);
+}
+.wish-send-btn:active{transform:scale(.97)}
+
+/* TOAST */
+.toast{
+  position:fixed;top:calc(var(--sat)+70px);left:50%;transform:translateX(-50%) translateY(-80px);
+  z-index:200;background:var(--sf2);border:1px solid var(--bd);border-radius:12px;
+  padding:10px 18px;font-size:.82rem;font-weight:500;white-space:nowrap;
+  box-shadow:var(--shadow);transition:transform .3s var(--spring);pointer-events:none;
+  display:flex;align-items:center;gap:8px;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ANIMATIONS */
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+.skeleton{
+  background:linear-gradient(90deg,var(--sf2) 25%,var(--sf3) 50%,var(--sf2) 75%);
+  background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:8px;
+}
+
+/* PROFILE BANNER */
+.profile-banner{
+  margin:16px;border-radius:var(--rx);padding:20px;
+  background:var(--grd);color:#fff;position:relative;overflow:hidden;
+}
+.profile-banner::before{
+  content:'🎉';position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  font-size:4rem;opacity:.15;
+}
+.profile-name{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;margin-bottom:4px}
+.profile-stats{display:flex;gap:16px;margin-top:10px}
+.profile-stat{text-align:center}
+.profile-stat-num{font-size:1.3rem;font-weight:700;line-height:1}
+.profile-stat-label{font-size:.65rem;opacity:.8;margin-top:2px;letter-spacing:.04em;text-transform:uppercase}
+
+/* CATEGORY TAGS */
+.tag-family{background:rgba(168,85,247,.15);color:#c084fc}
+.tag-relatives{background:rgba(245,158,11,.15);color:#fcd34d}
+.tag-friends{background:rgba(34,197,94,.15);color:#4ade80}
+.tag-colleagues{background:rgba(59,130,246,.15);color:#93c5fd}
+.tag-other{background:rgba(156,163,175,.15);color:#d1d5db}
+
+/* STAR BUTTON */
+.star-btn{
+  background:none;border:none;cursor:pointer;font-size:16px;
+  padding:2px;transition:transform .2s var(--spring);
+}
+.star-btn:active{transform:scale(1.3)}
+
+/* NO EVENTS */
+.no-events{
+  text-align:center;padding:32px 16px;color:var(--t3);font-size:.85rem;
+}
+.no-events-emoji{font-size:2.5rem;margin-bottom:8px}
+
+/* QUICK WISH SECTION */
+.quick-wish-list{padding:0 16px;display:flex;flex-direction:column;gap:8px}
+.quick-wish-item{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--sf2);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;
+}
+.quick-wish-left{display:flex;align-items:center;gap:10px}
+.quick-wish-name{font-size:.88rem;font-weight:600}
+.quick-wish-meta{font-size:.7rem;color:var(--t3);margin-top:2px}
+.quick-wa-btn{
+  padding:6px 12px;border-radius:8px;border:none;cursor:pointer;
+  background:rgba(37,211,102,.15);color:#25d366;
+  font-size:.75rem;font-weight:700;font-family:'DM Sans',sans-serif;
+  transition:all .15s;
+}
+.quick-wa-btn:active{transform:scale(.93)}
+
+/* SPARKLE */
+.sparkle{animation:sparkleAnim 1.5s ease-in-out infinite}
+@keyframes sparkleAnim{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.15) rotate(10deg)}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-logo">🎂</div>
+    <div class="hdr-title"><span>Event</span> Book</div>
+  </div>
+  <div class="hdr-right">
+    <div class="hdr-btn" onclick="toggleSearch()" title="Search">🔍</div>
+    <div class="hdr-btn" onclick="toggleTheme()" id="themeBtn">☀️</div>
+  </div>
+</div>
+
+<!-- PAGES -->
+<div class="pages">
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+    <div class="hero-section">
+      <div class="hero-greeting" id="heroGreeting">Good morning 👋</div>
+      <div class="hero-title" id="heroTitle">Today's Celebrations</div>
+    </div>
+    <div class="carousel-wrap">
+      <div class="carousel" id="heroCarousel"></div>
+    </div>
+    <div class="carousel-dots" id="carouselDots"></div>
+
+    <div class="section-label">UPCOMING — NEXT 7 DAYS</div>
+    <div class="upcoming-list" id="upcomingList"></div>
+
+    <div class="section-label">QUICK WISHES</div>
+    <div class="quick-wish-list" id="quickWishList"></div>
+  </div>
+
+  <!-- CATEGORIES PAGE -->
+  <div class="page" id="page-categories">
+    <div class="cat-page-top">
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search people..." oninput="filterPeople(this.value)"/>
+      </div>
+      <div class="sort-chips">
+        <div class="sort-chip active" onclick="setSort('upcoming',this)">⏳ Upcoming</div>
+        <div class="sort-chip" onclick="setSort('name',this)">🔤 Name</div>
+        <div class="sort-chip" onclick="setSort('age',this)">🎂 Age</div>
+        <div class="sort-chip" onclick="setSort('fav',this)">⭐ Favorites</div>
+      </div>
+    </div>
+    <div class="accordion-wrap" id="accordionWrap"></div>
+  </div>
+
+  <!-- CALENDAR PAGE -->
+  <div class="page" id="page-calendar">
+    <div class="cal-page">
+      <div class="cal-header">
+        <div class="cal-nav-btn" onclick="changeMonth(-1)">◀</div>
+        <div class="cal-month" id="calMonthLabel"></div>
+        <div class="cal-nav-btn" onclick="changeMonth(1)">▶</div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="section-label" style="padding:0;margin:20px 0 10px">EVENTS THIS MONTH</div>
+      <div class="cal-events-list" id="calEventsList"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS PAGE -->
+  <div class="page" id="page-settings">
+    <div class="settings-page">
+      <div class="profile-banner" id="profileBanner">
+        <div style="font-size:.7rem;opacity:.8;letter-spacing:.05em;text-transform:uppercase">Welcome to</div>
+        <div class="profile-name">Event Book 🎉</div>
+        <div style="font-size:.78rem;opacity:.85;margin-top:3px">Keeping celebrations alive</div>
+        <div class="profile-stats" id="profileStats"></div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">APPEARANCE</div>
+        <div class="settings-row" onclick="toggleTheme()">
+          <div class="settings-row-icon">🌙</div>
+          <div class="settings-row-label">Dark Mode</div>
+          <div class="toggle on" id="themeToggle"></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">REMINDERS</div>
+        <div class="settings-row">
+          <div class="settings-row-icon">📅</div>
+          <div class="settings-row-label">Same Day</div>
+          <div class="toggle on" id="remDay"></div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-icon">⏰</div>
+          <div class="settings-row-label">1 Day Before</div>
+          <div class="toggle on" id="rem1"></div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-icon">📆</div>
+          <div class="settings-row-label">7 Days Before</div>
+          <div class="toggle" id="rem7" onclick="toggleEl('rem7')"></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">WHATSAPP TEMPLATES</div>
+        <div class="settings-row" onclick="openTemplateEditor('birthday')">
+          <div class="settings-row-icon">🎂</div>
+          <div class="settings-row-label">Birthday Template</div>
+          <div class="settings-row-value">Edit ›</div>
+        </div>
+        <div class="settings-row" onclick="openTemplateEditor('anniversary')">
+          <div class="settings-row-icon">💍</div>
+          <div class="settings-row-label">Anniversary Template</div>
+          <div class="settings-row-value">Edit ›</div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">DATA</div>
+        <div class="settings-row" onclick="exportData()">
+          <div class="settings-row-icon">📤</div>
+          <div class="settings-row-label">Export Contacts</div>
+          <div class="settings-row-value">JSON ›</div>
+        </div>
+        <div class="settings-row" onclick="document.getElementById('importFile').click()">
+          <div class="settings-row-icon">📥</div>
+          <div class="settings-row-label">Import Contacts</div>
+          <div class="settings-row-value">›</div>
+        </div>
+        <div class="settings-row" onclick="loadSampleData()">
+          <div class="settings-row-icon">🎭</div>
+          <div class="settings-row-label">Load Sample Data</div>
+          <div class="settings-row-value">›</div>
+        </div>
+        <div class="settings-row" onclick="confirmClearAll()">
+          <div class="settings-row-icon">🗑️</div>
+          <div class="settings-row-label" style="color:#f87171">Clear All Data</div>
+          <div class="settings-row-value">›</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;padding:16px;font-size:.72rem;color:var(--t3)">
+        Event Book v1.0 · Made with ❤️
+      </div>
+    </div>
+  </div>
+
+</div><!-- /pages -->
+
+<!-- BOTTOM NAV -->
+<div class="tbar">
+  <div class="nav-item active" id="nav-home" onclick="switchPage('home')">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label">HOME</div>
+  </div>
+  <div class="nav-item" id="nav-categories" onclick="switchPage('categories')">
+    <div class="nav-icon">👥</div>
+    <div class="nav-label">PEOPLE</div>
+  </div>
+  <div class="nav-item" id="nav-calendar" onclick="switchPage('calendar')">
+    <div class="nav-icon">📅</div>
+    <div class="nav-label">CALENDAR</div>
+  </div>
+  <div class="nav-item" id="nav-settings" onclick="switchPage('settings')">
+    <div class="nav-icon">⚙️</div>
+    <div class="nav-label">SETTINGS</div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- FAB -->
+<button class="fab" onclick="openAddModal()" title="Add Person">＋</button>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal wish-modal">
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Add Person</div>
+      <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId"/>
+
+      <div style="display:flex;justify-content:center;margin-bottom:16px" id="photoArea">
+        <div class="photo-upload" onclick="triggerPhotoUpload()" id="photoUploadDiv">
+          <div class="photo-upload-icon">📷</div>
+          <div>Tap to add photo</div>
+        </div>
+        <img id="photoPreview" class="photo-preview" style="display:none" src="" alt=""/>
+      </div>
+      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="previewPhoto(this)"/>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">FULL NAME *</label>
+          <input class="form-input" id="fName" placeholder="Ramesh Kumar" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">NICKNAME</label>
+          <input class="form-input" id="fNick" placeholder="Ramu" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">CATEGORY *</label>
+          <select class="form-input form-select" id="fCategory">
+            <option value="Family">👨‍👩‍👧 Family</option>
+            <option value="Relatives">🏘️ Relatives</option>
+            <option value="Friends">🤝 Friends</option>
+            <option value="Colleagues">💼 Colleagues</option>
+            <option value="Other">🌐 Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">RELATIONSHIP</label>
+          <input class="form-input" id="fRelation" placeholder="Brother, Friend..." />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">DATE OF BIRTH</label>
+        <input class="form-input" type="date" id="fDOB" onchange="calcAge()"/>
+        <div id="ageDisplay" style="display:none" class="age-display">🎂 <span id="ageText"></span></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">ANNIVERSARY DATE</label>
+        <input class="form-input" type="date" id="fAnniv" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">WHATSAPP NUMBER</label>
+        <div class="phone-row">
+          <select class="country-code" id="fCC">
+            <option value="91">🇮🇳 +91</option>
+            <option value="1">🇺🇸 +1</option>
+            <option value="44">🇬🇧 +44</option>
+            <option value="971">🇦🇪 +971</option>
+            <option value="65">🇸🇬 +65</option>
+            <option value="61">🇦🇺 +61</option>
+            <option value="49">🇩🇪 +49</option>
+          </select>
+          <input class="form-input" type="tel" id="fPhone" placeholder="9876543210" style="flex:1"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">NOTES</label>
+        <textarea class="form-input" id="fNotes" rows="2" placeholder="Favourite things, memories..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.85rem;font-weight:500">
+          <input type="checkbox" id="fFav" style="width:16px;height:16px;accent-color:var(--pur)"/>
+          ⭐ Mark as Favourite
+        </label>
+      </div>
+
+      <div class="form-btns">
+        <button class="btn-cancel" onclick="closeModal('addModal')">Cancel</button>
+        <button class="btn-save" onclick="savePerson()">Save Person</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WISH MODAL -->
+<div class="modal-overlay" id="wishModal">
+  <div class="modal wish-modal">
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="wishModalTitle">Send Wishes 🎉</div>
+      <button class="modal-close" onclick="closeModal('wishModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--sf2);border-radius:12px;margin-bottom:16px;border:1px solid var(--bd)">
+        <div id="wishAvatar" class="hero-avatar" style="width:48px;height:48px;font-size:20px;flex-shrink:0"></div>
+        <div>
+          <div id="wishName" style="font-size:.95rem;font-weight:600"></div>
+          <div id="wishEventLabel" style="font-size:.75rem;color:var(--t3);margin-top:2px"></div>
+        </div>
+      </div>
+
+      <div class="form-label" style="margin-bottom:8px">TONE</div>
+      <div class="tone-chips" id="toneChips">
+        <div class="tone-chip active" onclick="setTone('emotional',this)">💖 Emotional</div>
+        <div class="tone-chip" onclick="setTone('funny',this)">😄 Funny</div>
+        <div class="tone-chip" onclick="setTone('spiritual',this)">🙏 Spiritual</div>
+        <div class="tone-chip" onclick="setTone('professional',this)">💼 Professional</div>
+        <div class="tone-chip" onclick="setTone('simple',this)">✉️ Short & Simple</div>
+      </div>
+
+      <div class="form-label" style="margin-bottom:8px">MESSAGE</div>
+      <textarea class="wish-text" id="wishText" rows="5" placeholder="Your wish message..."></textarea>
+
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button style="flex:1;padding:9px;border-radius:10px;border:1px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer" onclick="regenerateWish()">🔄 Regenerate</button>
+        <button style="flex:1;padding:9px;border-radius:10px;border:1px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer" onclick="copyWish()">📋 Copy</button>
+      </div>
+
+      <button class="wish-send-btn" onclick="sendWish()">
+        <span style="font-size:20px">💬</span> Send on WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="max-height:auto">
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="confirmTitle">Confirm</div>
+      <button class="modal-close" onclick="closeModal('confirmModal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding-bottom:28px">
+      <div id="confirmMsg" style="font-size:.9rem;color:var(--t2);line-height:1.5;margin-bottom:20px"></div>
+      <div class="form-btns">
+        <button class="btn-cancel" onclick="closeModal('confirmModal')">Cancel</button>
+        <button class="btn-save" id="confirmOkBtn" style="background:linear-gradient(135deg,#ef4444,#dc2626)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPLATE MODAL -->
+<div class="modal-overlay" id="templateModal">
+  <div class="modal wish-modal">
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="templateTitle">Edit Template</div>
+      <button class="modal-close" onclick="closeModal('templateModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:.78rem;color:var(--t3);margin-bottom:10px;line-height:1.5">
+        Use <code style="background:var(--sf3);padding:1px 5px;border-radius:4px">{name}</code> for person's name, <code style="background:var(--sf3);padding:1px 5px;border-radius:4px">{age}</code> for age, <code style="background:var(--sf3);padding:1px 5px;border-radius:4px">{years}</code> for years married
+      </div>
+      <div class="form-group">
+        <label class="form-label">EMOTIONAL</label>
+        <textarea class="form-input" id="tmpl_emotional" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">FUNNY</label>
+        <textarea class="form-input" id="tmpl_funny" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SPIRITUAL</label>
+        <textarea class="form-input" id="tmpl_spiritual" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">PROFESSIONAL</label>
+        <textarea class="form-input" id="tmpl_professional" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SHORT & SIMPLE</label>
+        <textarea class="form-input" id="tmpl_simple" rows="2"></textarea>
+      </div>
+      <div class="form-btns">
+        <button class="btn-cancel" onclick="closeModal('templateModal')">Cancel</button>
+        <button class="btn-save" onclick="saveTemplate()">Save Template</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)"/>
+
+<script>
+// ======================== DATA ========================
+const LS = 'eventbook_v1';
+const LS_THEME = 'eb_theme';
+let D = {};
+let calDate = new Date();
+let currentSort = 'upcoming';
+let currentWishPerson = null;
+let currentWishType = 'birthday';
+let currentTone = 'emotional';
+let editingTemplate = 'birthday';
+let searchQuery = '';
+
+const CATEGORIES = ['Family','Relatives','Friends','Colleagues','Other'];
+const CAT_ICONS = {Family:'👨‍👩‍👧',Relatives:'🏘️',Friends:'🤝',Colleagues:'💼',Other:'🌐'};
+const CAT_TAGS = {Family:'tag-family',Relatives:'tag-relatives',Friends:'tag-friends',Colleagues:'tag-colleagues',Other:'tag-other'};
+const AVATAR_COLORS = ['#7c3aed','#ec4899','#f59e0b','#06b6d4','#10b981','#f97316','#6366f1','#8b5cf6'];
+
+const DEFAULT_TEMPLATES = {
+  birthday:{
+    emotional:"Happy Birthday {name}! 🎉🎂 Wishing you a day filled with joy, laughter and love. May this {age}th year bring you everything your heart desires. You mean the world to us! 💖",
+    funny:"Happy Birthday {name}! 🎂😄 They say age is just a number... but in your case, it's {age}! Don't worry, you're ageing like fine wine! Have an amazing day! 🍷🎉",
+    spiritual:"Happy Birthday {name}! 🙏✨ May the Almighty bless you with health, wisdom and prosperity on this special day. Wishing you a life full of blessings and divine grace. 🌸",
+    professional:"Dear {name}, wishing you a very Happy Birthday! May this new year of your life bring you great success, good health and wonderful opportunities. Best wishes! 🎂",
+    simple:"Happy Birthday {name}! 🎉 Hope you have a wonderful day! 🎂"
+  },
+  anniversary:{
+    emotional:"Happy Anniversary {name}! 💍💖 {years} beautiful years of love, trust and togetherness. Wishing you both a lifetime of happiness, laughter and endless love. You are truly made for each other! 🌹",
+    funny:"Happy {years}th Anniversary! 🎊 They said it wouldn't last... but here you are! Another year of putting up with each other's nonsense! Just kidding — you two are #CoupleGoals! 😂💕",
+    spiritual:"Happy Anniversary {name}! 🙏✨ May God continue to bless your union with love, peace and joy. {years} years of a beautiful journey together — may the years ahead be even more blessed! 💐",
+    professional:"Congratulations on your {years}th Anniversary! Wishing you both continued happiness and prosperity in the years ahead. 💍",
+    simple:"Happy {years}th Anniversary {name}! 💍 Wishing you both many more happy years together! 🥂"
+  }
+};
+
+function load(){
+  try{D=JSON.parse(localStorage.getItem(LS))||{};}catch(e){D={};}
+  if(!D.people)D.people=[];
+  if(!D.templates)D.templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+}
+function save(){localStorage.setItem(LS,JSON.stringify(D));}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+
+// ======================== DATE UTILS ========================
+function today(){const d=new Date();d.setHours(0,0,0,0);return d;}
+function parseDate(s){if(!s)return null;const[y,m,d]=s.split('-').map(Number);const dt=new Date(y,m-1,d);dt.setHours(0,0,0,0);return dt;}
+function daysUntil(dateStr){
+  if(!dateStr)return null;
+  const now=today();
+  const d=parseDate(dateStr);
+  const thisYear=new Date(now.getFullYear(),d.getMonth(),d.getDate());
+  if(thisYear<now)thisYear.setFullYear(thisYear.getFullYear()+1);
+  return Math.round((thisYear-now)/(1000*60*60*24));
+}
+function getAge(dobStr){
+  if(!dobStr)return null;
+  const dob=parseDate(dobStr);
+  const now=today();
+  let age=now.getFullYear()-dob.getFullYear();
+  const m=now.getMonth()-dob.getMonth();
+  if(m<0||(m===0&&now.getDate()<dob.getDate()))age--;
+  return age;
+}
+function getAgeOnNextBirthday(dobStr){
+  if(!dobStr)return null;
+  const dob=parseDate(dobStr);
+  const now=today();
+  const nextBday=new Date(now.getFullYear(),dob.getMonth(),dob.getDate());
+  if(nextBday<now)nextBday.setFullYear(nextBday.getFullYear()+1);
+  return nextBday.getFullYear()-dob.getFullYear();
+}
+function getYearsOnNextAnniv(anniversaryStr){
+  if(!anniversaryStr)return null;
+  const a=parseDate(anniversaryStr);
+  const now=today();
+  const next=new Date(now.getFullYear(),a.getMonth(),a.getDate());
+  if(next<now)next.setFullYear(next.getFullYear()+1);
+  return next.getFullYear()-a.getFullYear();
+}
+function fmtDate(s){
+  if(!s)return '';
+  const d=parseDate(s);
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+}
+function fmtDateFull(s){
+  if(!s)return '';
+  const d=parseDate(s);
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'long'});
+}
+
+// ======================== AVATAR ========================
+function avatarColor(name){
+  let h=0;for(let c of name)h=(h*31+c.charCodeAt(0))%AVATAR_COLORS.length;
+  return AVATAR_COLORS[h];
+}
+function avatarInitials(name){return (name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+function avatarHtml(p,size=44,r=12){
+  if(p.photo)return`<img src="${p.photo}" style="width:${size}px;height:${size}px;border-radius:${r}px;object-fit:cover"/>`;
+  return`<div style="width:${size}px;height:${size}px;border-radius:${r}px;background:${avatarColor(p.name||'?')};display:flex;align-items:center;justify-content:center;font-size:${Math.round(size*.38)}px;font-weight:700;color:#fff;flex-shrink:0">${avatarInitials(p.name||'?')}</div>`;
+}
+
+// ======================== EVENTS ENGINE ========================
+function getEventsForDay(month,day,year){
+  const events=[];
+  D.people.forEach(p=>{
+    if(p.dob){
+      const d=parseDate(p.dob);
+      if(d.getMonth()===month&&d.getDate()===day){
+        events.push({person:p,type:'birthday',days:0});
+      }
+    }
+    if(p.anniv){
+      const d=parseDate(p.anniv);
+      if(d.getMonth()===month&&d.getDate()===day){
+        events.push({person:p,type:'anniversary',days:0});
+      }
+    }
+  });
+  return events;
+}
+function getTodayEvents(){return getEventsForDay(today().getMonth(),today().getDate(),today().getFullYear())}
+function getUpcoming7(){
+  const evs=[];
+  const now=today();
+  D.people.forEach(p=>{
+    if(p.dob){const d=daysUntil(p.dob);if(d!==null&&d>0&&d<=7)evs.push({person:p,type:'birthday',days:d});}
+    if(p.anniv){const d=daysUntil(p.anniv);if(d!==null&&d>0&&d<=7)evs.push({person:p,type:'anniversary',days:d});}
+  });
+  return evs.sort((a,b)=>a.days-b.days);
+}
+
+// ======================== RENDER HOME ========================
+function renderHome(){
+  renderHeroCarousel();
+  renderUpcoming();
+  renderQuickWishes();
+  setGreeting();
+}
+function setGreeting(){
+  const h=new Date().getHours();
+  const g=h<12?'Good morning ☀️':h<17?'Good afternoon 🌤️':'Good evening 🌙';
+  document.getElementById('heroGreeting').textContent=g;
+  const todayEvs=getTodayEvents();
+  const title=todayEvs.length>0?`${todayEvs.length} Celebration${todayEvs.length>1?'s':''} Today! 🎊`:'Today\'s Celebrations';
+  document.getElementById('heroTitle').textContent=title;
+}
+function renderHeroCarousel(){
+  const carousel=document.getElementById('heroCarousel');
+  const dots=document.getElementById('carouselDots');
+  const todayEvs=getTodayEvents();
+  const upEvs=getUpcoming7().slice(0,3);
+  const cards=[];
+  todayEvs.forEach(ev=>cards.push({...ev,days:0}));
+  upEvs.forEach(ev=>cards.push(ev));
+  carousel.innerHTML='';dots.innerHTML='';
+  if(cards.length===0){
+    carousel.innerHTML=`<div class="empty-hero">
+      <div class="empty-hero-emoji">🌟</div>
+      <div class="empty-hero-title">No Events Today</div>
+      <div class="empty-hero-sub">Add birthdays &amp; anniversaries to get started.<br>Tap <b>+</b> to add your first person!</div>
+    </div>`;
+    return;
+  }
+  cards.forEach((ev,i)=>{
+    const p=ev.person;
+    const isToday=ev.days===0;
+    const isBday=ev.type==='birthday';
+    const cls=isBday?'birthday':'anniversary';
+    const emoji=isBday?'🎂':'💍';
+    const ageThis=isBday?getAgeOnNextBirthday(p.dob):null;
+    const yearsThis=!isBday?getYearsOnNextAnniv(p.anniv):null;
+    const sub=isBday?(ageThis?`Turning ${ageThis} today 🎉`:`Birthday today 🎉`):(yearsThis?`${yearsThis} years of love 💑`:`Anniversary today 💍`);
+    const subUpcoming=isBday?(ageThis?`Turns ${ageThis} in ${ev.days} day${ev.days>1?'s':''}`:`Birthday in ${ev.days} day${ev.days>1?'s':''}`):(yearsThis?`${yearsThis} yrs anniv in ${ev.days} day${ev.days>1?'s':''}`:`Anniversary in ${ev.days} day${ev.days>1?'s':''}`);
+    const confetti=isToday?generateConfetti():'';
+    carousel.innerHTML+=`<div class="hero-card ${cls}" style="animation-delay:${i*.08}s">
+      <div class="hero-card-glow"></div>
+      ${confetti}
+      <div class="hero-card-top">
+        ${avatarHtml(p,56,16)}
+        <div class="hero-card-info">
+          <div class="hero-event-badge ${isBday?'badge-birthday':'badge-anniversary'}">${emoji} ${isBday?'Birthday':'Anniversary'}</div>
+          <div class="hero-name">${p.name}</div>
+          <div class="hero-sub">${isToday?sub:subUpcoming}</div>
+        </div>
+      </div>
+      <div class="hero-days-chip ${isToday?'today':''}">
+        ${isToday?'🎉 Today!':'⏳ '+ev.days+' day'+(ev.days>1?'s':'')+' away'}
+      </div>
+      <button class="hero-wish-btn" onclick="openWishModal('${p.id}','${ev.type}')">
+        <span>💬</span> Send Wishes on WhatsApp
+      </button>
+    </div>`;
+    dots.innerHTML+=`<div class="carousel-dot ${i===0?'active':''}" id="dot-${i}"></div>`;
+  });
+  // Dot sync
+  const c=carousel;
+  c.addEventListener('scroll',()=>{
+    const idx=Math.round(c.scrollLeft/(c.scrollWidth/cards.length));
+    dots.querySelectorAll('.carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  },{passive:true});
+}
+function generateConfetti(){
+  const colors=['#a855f7','#ec4899','#f59e0b','#06b6d4','#4ade80'];
+  let html='<div class="confetti-container">';
+  for(let i=0;i<10;i++){
+    const c=colors[i%colors.length];
+    const left=Math.random()*90+5;
+    const delay=Math.random()*2;
+    const dur=2+Math.random()*2;
+    html+=`<div class="confetti-piece" style="left:${left}%;background:${c};animation-delay:${delay}s;animation-duration:${dur}s"></div>`;
+  }
+  return html+'</div>';
+}
+function renderUpcoming(){
+  const ul=document.getElementById('upcomingList');
+  const evs=getUpcoming7();
+  if(evs.length===0){
+    ul.innerHTML='<div class="no-events"><div class="no-events-emoji">🗓️</div><div>No events in the next 7 days</div></div>';
+    return;
+  }
+  ul.innerHTML=evs.map(ev=>{
+    const p=ev.person;
+    const isBday=ev.type==='birthday';
+    const ageNext=isBday?getAgeOnNextBirthday(p.dob):null;
+    const yrsNext=!isBday?getYearsOnNextAnniv(p.anniv):null;
+    const meta=isBday?(ageNext?`Turning ${ageNext} — ${fmtDateFull(p.dob)}`:`Birthday — ${fmtDateFull(p.dob)}`):(yrsNext?`${yrsNext} yrs — ${fmtDateFull(p.anniv)}`:`Anniversary — ${fmtDateFull(p.anniv)}`);
+    const chipCls=ev.days===1?'days-soon':'days-normal';
+    return`<div class="upcoming-card" onclick="openWishModal('${p.id}','${ev.type}')">
+      ${avatarHtml(p,42,12)}
+      <div class="upcoming-info">
+        <div class="upcoming-name">${p.name} ${isBday?'🎂':'💍'}</div>
+        <div class="upcoming-meta">${meta}</div>
+      </div>
+      <div class="upcoming-days ${chipCls}">${ev.days}d</div>
+    </div>`;
+  }).join('');
+}
+function renderQuickWishes(){
+  const ql=document.getElementById('quickWishList');
+  const todayEvs=getTodayEvents();
+  if(todayEvs.length===0){
+    ql.innerHTML='<div class="no-events"><div class="no-events-emoji">💌</div><div>No wishes to send today</div></div>';
+    return;
+  }
+  ql.innerHTML=todayEvs.map(ev=>{
+    const p=ev.person;
+    const isBday=ev.type==='birthday';
+    return`<div class="quick-wish-item">
+      <div class="quick-wish-left">
+        ${avatarHtml(p,38,10)}
+        <div>
+          <div class="quick-wish-name">${p.name}</div>
+          <div class="quick-wish-meta">${isBday?'🎂 Birthday Today!':'💍 Anniversary Today!'}</div>
+        </div>
+      </div>
+      <button class="quick-wa-btn" onclick="openWishModal('${p.id}','${ev.type}')">💬 Wish</button>
+    </div>`;
+  }).join('');
+}
+
+// ======================== CATEGORIES ========================
+function renderCategories(){
+  const wrap=document.getElementById('accordionWrap');
+  const q=searchQuery.toLowerCase();
+  let filtered=D.people.filter(p=>!q||p.name.toLowerCase().includes(q)||(p.relation||'').toLowerCase().includes(q));
+  // Sort
+  filtered=sortPeople(filtered);
+  wrap.innerHTML='';
+  CATEGORIES.forEach(cat=>{
+    const members=filtered.filter(p=>p.category===cat);
+    const all=D.people.filter(p=>p.category===cat);
+    const div=document.createElement('div');
+    div.className='accordion';
+    div.id='acc-'+cat;
+    div.innerHTML=`<div class="accordion-header" onclick="toggleAccordion('acc-${cat}')">
+      <div class="accordion-icon">${CAT_ICONS[cat]}</div>
+      <div class="accordion-label-wrap">
+        <div class="accordion-title">${cat}</div>
+        <div class="accordion-count">${all.length} ${all.length===1?'person':'people'}${q&&members.length!==all.length?' · '+members.length+' match':''}</div>
+      </div>
+      <div class="accordion-caret">▼</div>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-inner" id="inner-${cat}">
+        ${members.length===0?`<div class="no-events"><div class="no-events-emoji">😶</div><div>${q?'No matches':'No one here yet'}</div></div>`
+        :members.map(p=>personCardHtml(p)).join('')}
+      </div>
+    </div>`;
+    wrap.appendChild(div);
+    if(all.length>0)div.classList.add('open');
+  });
+}
+function personCardHtml(p){
+  const age=getAge(p.dob);
+  const bdays=p.dob?`🎂 ${fmtDate(p.dob)}${age!==null?' ('+age+' yrs)':''}`:'';
+  const annivs=p.anniv?`💍 ${fmtDate(p.anniv)}`:'';
+  const details=[bdays,annivs].filter(Boolean).join(' · ');
+  const dbu=p.dob?daysUntil(p.dob):null;
+  const dau=p.anniv?daysUntil(p.anniv):null;
+  const nextDays=Math.min(...[dbu,dau].filter(d=>d!==null));
+  const nextLabel=nextDays===0?'🎉 Today':nextDays<=7?`in ${nextDays}d`:'';
+  return`<div class="person-card">
+    ${avatarHtml(p,44,12)}
+    <div class="person-info">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span class="person-name">${p.name}</span>
+        ${p.fav?'<span style="font-size:12px">⭐</span>':''}
+        ${nextLabel?`<span style="font-size:.62rem;background:rgba(168,85,247,.15);color:#c084fc;padding:1px 6px;border-radius:10px;font-weight:600;margin-left:2px">${nextLabel}</span>`:''}
+      </div>
+      <div class="person-details">${details||'No dates added'}</div>
+      ${p.relation?`<span class="person-tag ${CAT_TAGS[p.category]||'tag-other'}">${p.relation}</span>`:''}
+    </div>
+    <div class="person-actions">
+      ${p.phone?`<button class="action-btn btn-wa" onclick="openWishModalAuto('${p.id}')">💬</button>`:''}
+      <button class="action-btn btn-edit" onclick="openEditModal('${p.id}')">✏️</button>
+      <button class="action-btn btn-del" onclick="deletePerson('${p.id}')">🗑️</button>
+    </div>
+  </div>`;
+}
+function toggleAccordion(id){
+  const el=document.getElementById(id);
+  el.classList.toggle('open');
+}
+function sortPeople(arr){
+  if(currentSort==='name')return[...arr].sort((a,b)=>a.name.localeCompare(b.name));
+  if(currentSort==='age')return[...arr].sort((a,b)=>(getAge(a.dob)||999)-(getAge(b.dob)||999));
+  if(currentSort==='fav')return[...arr].sort((a,b)=>(b.fav?1:0)-(a.fav?1:0));
+  // upcoming
+  return[...arr].sort((a,b)=>{
+    const da=Math.min(...[daysUntil(a.dob),daysUntil(a.anniv)].filter(d=>d!==null).concat([9999]));
+    const db=Math.min(...[daysUntil(b.dob),daysUntil(b.anniv)].filter(d=>d!==null).concat([9999]));
+    return da-db;
+  });
+}
+function filterPeople(q){searchQuery=q;renderCategories();}
+function setSort(s,el){
+  currentSort=s;
+  document.querySelectorAll('.sort-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderCategories();
+}
+
+// ======================== CALENDAR ========================
+function renderCalendar(){
+  const y=calDate.getFullYear(),m=calDate.getMonth();
+  document.getElementById('calMonthLabel').textContent=calDate.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  const grid=document.getElementById('calGrid');
+  const dows=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  let html=dows.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  const first=new Date(y,m,1).getDay();
+  const last=new Date(y,m+1,0).getDate();
+  for(let i=0;i<first;i++)html+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=last;d++){
+    const evs=getEventsForDay(m,d,y);
+    const isToday=new Date().getDate()===d&&new Date().getMonth()===m&&new Date().getFullYear()===y;
+    const hasBday=evs.some(e=>e.type==='birthday');
+    const hasAnniv=evs.some(e=>e.type==='anniversary');
+    const cls=[isToday?'today':'',evs.length>0?'has-event':'',hasBday?'has-birthday':'',hasAnniv&&!hasBday?'has-anniversary':''].filter(Boolean).join(' ');
+    html+=`<div class="cal-day ${cls}" onclick="showCalDayEvents(${d})">${d}</div>`;
+  }
+  grid.innerHTML=html;
+  renderCalEventsList(m,y);
+}
+function renderCalEventsList(m,y){
+  const list=document.getElementById('calEventsList');
+  const evs=[];
+  D.people.forEach(p=>{
+    if(p.dob){const d=parseDate(p.dob);if(d.getMonth()===m)evs.push({person:p,type:'birthday',day:d.getDate()});}
+    if(p.anniv){const d=parseDate(p.anniv);if(d.getMonth()===m)evs.push({person:p,type:'anniversary',day:d.getDate()});}
+  });
+  evs.sort((a,b)=>a.day-b.day);
+  if(evs.length===0){list.innerHTML='<div class="no-events"><div class="no-events-emoji">📅</div><div>No events this month</div></div>';return;}
+  list.innerHTML=evs.map(ev=>{
+    const p=ev.person;const isBday=ev.type==='birthday';
+    const col=isBday?'#ec4899':'#f59e0b';
+    const age=isBday?getAgeOnNextBirthday(p.dob):getYearsOnNextAnniv(p.anniv);
+    return`<div class="cal-event-item">
+      <div class="cal-event-dot" style="background:${col}"></div>
+      ${avatarHtml(p,36,10)}
+      <div style="flex:1">
+        <div style="font-size:.88rem;font-weight:600">${p.name}</div>
+        <div style="font-size:.72rem;color:var(--t3);margin-top:2px">${isBday?'🎂 Birthday':'💍 Anniversary'} · ${fmtDateFull(isBday?p.dob:p.anniv)}${age?' · '+age+(isBday?' yrs':' yrs together'):''}</div>
+      </div>
+      ${p.phone?`<button class="action-btn btn-wa" onclick="openWishModal('${p.id}','${ev.type}')">💬</button>`:''}
+    </div>`;
+  }).join('');
+}
+function changeMonth(dir){calDate=new Date(calDate.getFullYear(),calDate.getMonth()+dir,1);renderCalendar();}
+function showCalDayEvents(day){
+  const evs=getEventsForDay(calDate.getMonth(),day,calDate.getFullYear());
+  if(evs.length>0){
+    const names=evs.map(e=>e.person.name+' ('+(e.type==='birthday'?'🎂':'💍')+')').join(', ');
+    showToast('📅 '+names);
+  }
+}
+
+// ======================== ADD / EDIT ========================
+function openAddModal(){
+  clearForm();
+  document.getElementById('modalTitle').textContent='Add Person ✨';
+  document.getElementById('editId').value='';
+  openModal('addModal');
+}
+function openEditModal(id){
+  const p=D.people.find(x=>x.id===id);
+  if(!p)return;
+  clearForm();
+  document.getElementById('modalTitle').textContent='Edit Person ✏️';
+  document.getElementById('editId').value=id;
+  document.getElementById('fName').value=p.name||'';
+  document.getElementById('fNick').value=p.nick||'';
+  document.getElementById('fCategory').value=p.category||'Family';
+  document.getElementById('fRelation').value=p.relation||'';
+  document.getElementById('fDOB').value=p.dob||'';
+  document.getElementById('fAnniv').value=p.anniv||'';
+  document.getElementById('fCC').value=p.cc||'91';
+  document.getElementById('fPhone').value=p.phone||'';
+  document.getElementById('fNotes').value=p.notes||'';
+  document.getElementById('fFav').checked=p.fav||false;
+  if(p.photo){
+    document.getElementById('photoPreview').src=p.photo;
+    document.getElementById('photoPreview').style.display='block';
+    document.getElementById('photoUploadDiv').style.display='none';
+  }
+  calcAge();
+  openModal('addModal');
+}
+function clearForm(){
+  ['fName','fNick','fRelation','fDOB','fAnniv','fPhone','fNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fCategory').value='Family';
+  document.getElementById('fCC').value='91';
+  document.getElementById('fFav').checked=false;
+  document.getElementById('photoPreview').style.display='none';
+  document.getElementById('photoUploadDiv').style.display='flex';
+  document.getElementById('photoPreview').src='';
+  document.getElementById('ageDisplay').style.display='none';
+  window._photoData=null;
+}
+function savePerson(){
+  const name=document.getElementById('fName').value.trim();
+  if(!name){showToast('⚠️ Name is required');return;}
+  const dob=document.getElementById('fDOB').value;
+  const anniv=document.getElementById('fAnniv').value;
+  if(!dob&&!anniv){showToast('⚠️ Add at least one date');return;}
+  const phone=document.getElementById('fPhone').value.trim().replace(/\D/g,'');
+  const editId=document.getElementById('editId').value;
+  const person={
+    id:editId||uid(),
+    name,nick:document.getElementById('fNick').value.trim(),
+    category:document.getElementById('fCategory').value,
+    relation:document.getElementById('fRelation').value.trim(),
+    dob,anniv,
+    cc:document.getElementById('fCC').value,
+    phone,notes:document.getElementById('fNotes').value.trim(),
+    fav:document.getElementById('fFav').checked,
+    photo:window._photoData||null
+  };
+  if(editId){
+    const idx=D.people.findIndex(p=>p.id===editId);
+    if(idx!==-1)D.people[idx]=person;
+  }else{
+    D.people.push(person);
+  }
+  save();closeModal('addModal');
+  renderAll();
+  showToast(editId?'✅ Person updated!':'🎉 Person added!');
+}
+function deletePerson(id){
+  const p=D.people.find(x=>x.id===id);
+  if(!p)return;
+  document.getElementById('confirmTitle').textContent='Delete Person?';
+  document.getElementById('confirmMsg').textContent=`Are you sure you want to remove ${p.name}? This cannot be undone.`;
+  document.getElementById('confirmOkBtn').onclick=()=>{
+    D.people=D.people.filter(x=>x.id!==id);
+    save();closeModal('confirmModal');
+    renderAll();showToast('🗑️ Removed '+p.name);
+  };
+  openModal('confirmModal');
+}
+function triggerPhotoUpload(){document.getElementById('photoInput').click();}
+function previewPhoto(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    window._photoData=e.target.result;
+    document.getElementById('photoPreview').src=e.target.result;
+    document.getElementById('photoPreview').style.display='block';
+    document.getElementById('photoUploadDiv').style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+function calcAge(){
+  const dob=document.getElementById('fDOB').value;
+  if(!dob){document.getElementById('ageDisplay').style.display='none';return;}
+  const age=getAge(dob);
+  const next=getAgeOnNextBirthday(dob);
+  if(age!==null){
+    document.getElementById('ageText').textContent=`Currently ${age} years old · Turning ${next} this year`;
+    document.getElementById('ageDisplay').style.display='flex';
+  }
+}
+
+// ======================== WISH MODAL ========================
+function openWishModal(personId,type){
+  const p=D.people.find(x=>x.id===personId);
+  if(!p)return;
+  currentWishPerson=p;currentWishType=type;
+  const isBday=type==='birthday';
+  document.getElementById('wishModalTitle').textContent=isBday?'Send Birthday Wishes 🎂':'Send Anniversary Wishes 💍';
+  document.getElementById('wishName').textContent=p.name;
+  const ageN=isBday?getAgeOnNextBirthday(p.dob):null;
+  const yrsN=!isBday?getYearsOnNextAnniv(p.anniv):null;
+  document.getElementById('wishEventLabel').textContent=isBday?(ageN?`Turning ${ageN} — ${fmtDateFull(p.dob)}`:`Birthday — ${fmtDateFull(p.dob)}`):(yrsN?`${yrsN} years together — ${fmtDateFull(p.anniv)}`:`Anniversary — ${fmtDateFull(p.anniv)}`);
+  const avEl=document.getElementById('wishAvatar');
+  avEl.innerHTML=p.photo?`<img src="${p.photo}" style="width:48px;height:48px;border-radius:14px;object-fit:cover"/>`:`<div style="width:48px;height:48px;border-radius:14px;background:${avatarColor(p.name)};display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff">${avatarInitials(p.name)}</div>`;
+  currentTone='emotional';
+  document.querySelectorAll('.tone-chip').forEach((c,i)=>c.classList.toggle('active',i===0));
+  document.getElementById('wishText').value=generateWishText(p,type,'emotional');
+  openModal('wishModal');
+}
+function openWishModalAuto(personId){
+  const p=D.people.find(x=>x.id===personId);if(!p)return;
+  const dbu=p.dob?daysUntil(p.dob):null;
+  const dau=p.anniv?daysUntil(p.anniv):null;
+  const type=(dbu!==null&&(dau===null||dbu<=dau))?'birthday':'anniversary';
+  openWishModal(personId,type);
+}
+function generateWishText(p,type,tone){
+  const tmpl=(D.templates[type]||DEFAULT_TEMPLATES[type])[tone]||DEFAULT_TEMPLATES[type][tone];
+  const age=type==='birthday'?getAgeOnNextBirthday(p.dob):null;
+  const years=type==='anniversary'?getYearsOnNextAnniv(p.anniv):null;
+  return tmpl.replace(/{name}/g,p.nick||p.name.split(' ')[0]).replace(/{age}/g,age||'').replace(/{years}/g,years||'');
+}
+function setTone(tone,el){
+  currentTone=tone;
+  document.querySelectorAll('.tone-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  if(currentWishPerson)document.getElementById('wishText').value=generateWishText(currentWishPerson,currentWishType,tone);
+}
+function regenerateWish(){
+  if(!currentWishPerson)return;
+  document.getElementById('wishText').value=generateWishText(currentWishPerson,currentWishType,currentTone);
+  showToast('🔄 Message refreshed!');
+}
+function copyWish(){
+  const txt=document.getElementById('wishText').value;
+  navigator.clipboard.writeText(txt).then(()=>showToast('📋 Copied to clipboard!')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    showToast('📋 Copied!');
+  });
+}
+function sendWish(){
+  const p=currentWishPerson;if(!p)return;
+  const msg=document.getElementById('wishText').value.trim();
+  if(!msg){showToast('⚠️ Write a message first');return;}
+  const num=p.phone?(p.cc||'91')+p.phone.replace(/\D/g,''):'';
+  const url=num?`https://wa.me/${num}?text=${encodeURIComponent(msg)}`:`https://wa.me/?text=${encodeURIComponent(msg)}`;
+  window.open(url,'_blank');
+  closeModal('wishModal');
+  showToast('✅ Opening WhatsApp...');
+}
+
+// ======================== SETTINGS ========================
+function updateProfileStats(){
+  const stats=document.getElementById('profileStats');
+  const total=D.people.length;
+  const todayC=getTodayEvents().length;
+  const week=getUpcoming7().length;
+  stats.innerHTML=`<div class="profile-stat"><div class="profile-stat-num">${total}</div><div class="profile-stat-label">People</div></div>
+  <div class="profile-stat"><div class="profile-stat-num">${todayC}</div><div class="profile-stat-label">Today</div></div>
+  <div class="profile-stat"><div class="profile-stat-num">${week}</div><div class="profile-stat-label">This Week</div></div>`;
+}
+function openTemplateEditor(type){
+  editingTemplate=type;
+  document.getElementById('templateTitle').textContent=type==='birthday'?'Birthday Templates 🎂':'Anniversary Templates 💍';
+  const tmpl=D.templates[type]||DEFAULT_TEMPLATES[type];
+  ['emotional','funny','spiritual','professional','simple'].forEach(t=>{
+    document.getElementById('tmpl_'+t).value=tmpl[t]||'';
+  });
+  openModal('templateModal');
+}
+function saveTemplate(){
+  if(!D.templates)D.templates={};
+  D.templates[editingTemplate]={};
+  ['emotional','funny','spiritual','professional','simple'].forEach(t=>{
+    D.templates[editingTemplate][t]=document.getElementById('tmpl_'+t).value;
+  });
+  save();closeModal('templateModal');showToast('✅ Templates saved!');
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='eventbook-backup.json';a.click();
+  showToast('📤 Exported successfully!');
+}
+function importData(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const imported=JSON.parse(e.target.result);
+      if(imported.people){D=imported;save();renderAll();showToast('📥 Data imported!');}
+      else showToast('⚠️ Invalid file format');
+    }catch(err){showToast('⚠️ Could not read file');}
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+function confirmClearAll(){
+  document.getElementById('confirmTitle').textContent='Clear All Data?';
+  document.getElementById('confirmMsg').textContent='This will permanently delete all your contacts and data. This cannot be undone!';
+  document.getElementById('confirmOkBtn').textContent='Clear All';
+  document.getElementById('confirmOkBtn').onclick=()=>{
+    D={people:[],templates:JSON.parse(JSON.stringify(DEFAULT_TEMPLATES))};
+    save();closeModal('confirmModal');renderAll();showToast('🗑️ All data cleared');
+  };
+  openModal('confirmModal');
+}
+function loadSampleData(){
+  const samples=[
+    {id:uid(),name:'Ramesh Kumar',nick:'Ramu',category:'Family',relation:'Brother',dob:'1988-05-21',anniv:'',cc:'91',phone:'9876543210',notes:'Loves cricket',fav:true,photo:null},
+    {id:uid(),name:'Priya Sharma',nick:'Priya',category:'Family',relation:'Sister',dob:'1992-06-15',anniv:'',cc:'91',phone:'9876543211',notes:'Loves cooking',fav:false,photo:null},
+    {id:uid(),name:'Anil & Meena',nick:'',category:'Relatives',relation:'Uncle & Aunt',dob:'',anniv:'2014-05-21',cc:'91',phone:'9876543212',notes:'10 years married',fav:true,photo:null},
+    {id:uid(),name:'Suresh Babu',nick:'Suresh',category:'Friends',relation:'School Friend',dob:'1990-05-28',anniv:'',cc:'91',phone:'9876543213',notes:'Best friend since school',fav:true,photo:null},
+    {id:uid(),name:'Kavitha Reddy',nick:'Kavi',category:'Friends',relation:'College Friend',dob:'1991-06-03',anniv:'',cc:'91',phone:'9876543214',notes:'',fav:false,photo:null},
+    {id:uid(),name:'Venkat & Lakshmi',nick:'',category:'Family',relation:'Parents',dob:'',anniv:'1985-06-10',cc:'91',phone:'9876543215',notes:'40 years anniversary!',fav:true,photo:null},
+    {id:uid(),name:'Ravi Teja',nick:'Ravi',category:'Colleagues',relation:'Manager',dob:'1985-06-20',anniv:'',cc:'91',phone:'9876543216',notes:'',fav:false,photo:null},
+    {id:uid(),name:'Deepika Nair',nick:'Deepu',category:'Friends',relation:'Neighbour',dob:'1993-07-04',anniv:'',cc:'91',phone:'9876543217',notes:'Loves reading',fav:false,photo:null},
+  ];
+  D.people=[...D.people,...samples];
+  save();renderAll();showToast('🎭 Sample data loaded!');
+}
+
+// ======================== NAVIGATION ========================
+let currentPage='home';
+function switchPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.getElementById('nav-'+page).classList.add('active');
+  currentPage=page;
+  if(page==='categories')renderCategories();
+  if(page==='calendar')renderCalendar();
+  if(page==='settings')updateProfileStats();
+}
+function renderAll(){
+  renderHome();
+  if(currentPage==='categories')renderCategories();
+  if(currentPage==='calendar')renderCalendar();
+  if(currentPage==='settings')updateProfileStats();
+}
+
+// ======================== THEME ========================
+let isDark=true;
+function toggleTheme(){
+  isDark=!isDark;
+  document.body.setAttribute('data-theme',isDark?'dark':'light');
+  document.getElementById('themeBtn').textContent=isDark?'☀️':'🌙';
+  document.getElementById('themeToggle').classList.toggle('on',isDark);
+  localStorage.setItem(LS_THEME,isDark?'dark':'light');
+}
+function toggleEl(id){document.getElementById(id).classList.toggle('on');}
+
+// ======================== MODAL ========================
+function openModal(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
+// Close modal on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)closeModal(o.id);});
+});
+
+// ======================== TOAST ========================
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// ======================== SEARCH ========================
+function toggleSearch(){
+  switchPage('categories');
+  setTimeout(()=>document.getElementById('searchInput').focus(),300);
+}
+
+// ======================== INIT ========================
+function init(){
+  load();
+  const savedTheme=localStorage.getItem(LS_THEME)||'dark';
+  isDark=savedTheme==='dark';
+  if(!isDark){document.body.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='🌙';document.getElementById('themeToggle').classList.remove('on');}
+  renderAll();
+  if(D.people.length===0){
+    setTimeout(()=>showToast('👋 Welcome! Tap + to add your first person'),1000);
+  }
+}
+init();
+</script>
+</body>
+</html>
