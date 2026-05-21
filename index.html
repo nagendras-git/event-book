@@ -167,13 +167,34 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .addrow{display:flex;align-items:center;justify-content:center;padding:13px;border:1px solid var(--blue-bd);border-radius:var(--rl);cursor:pointer;color:var(--blue);font-size:.86rem;font-weight:600;gap:8px;background:var(--blue-bg);transition:all 120ms;}
 .addrow:active{opacity:.7}
 
-/* HERO CARD (home) */
+/* HERO CARD (home stats) */
 .hero-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);overflow:hidden;margin-bottom:10px;}
 .hero-top{padding:16px 18px 14px;border-bottom:1px solid var(--bd2);}
 .hero-grid{display:grid;grid-template-columns:1fr 1fr 1fr;}
 .hero-cell{padding:11px 14px;}
 .hero-cell:not(:last-child){border-right:1px solid var(--bd2);}
 .hero-cell-val{font-size:1rem;font-weight:800;letter-spacing:-.3px;margin-top:3px;}
+
+/* HERO CELEBRATION BANNER */
+.cel-banner{border-radius:var(--rx);overflow:hidden;margin-bottom:6px;position:relative;min-height:130px;}
+.cel-banner-bg{position:absolute;inset:0;}
+.cel-banner-body{position:relative;z-index:1;padding:18px 16px 16px;padding-right:88px;}
+.cel-eyebrow{font-size:.6rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;opacity:.75;margin-bottom:5px;color:#fff;}
+.cel-name{font-size:1.3rem;font-weight:800;letter-spacing:-.3px;line-height:1.15;color:#fff;margin-bottom:3px;}
+.cel-sub{font-size:.76rem;opacity:.82;color:#fff;margin-bottom:13px;line-height:1.4;}
+.cel-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.cel-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:.7rem;font-weight:700;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);color:#fff;}
+.cel-wa-btn{padding:8px 14px;border-radius:9px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;background:#25d366;color:#fff;display:flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(37,211,102,.45);transition:all .12s;}
+.cel-wa-btn:active{transform:scale(.95)}
+.cel-ava{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:58px;height:58px;border-radius:14px;border:2px solid rgba(255,255,255,.3);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:#fff;z-index:2;}
+.cel-ava img{width:100%;height:100%;object-fit:cover;}
+.cel-dots{display:flex;gap:4px;justify-content:center;margin-top:8px;}
+.cel-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .2s;}
+.cel-dot.on{width:14px;border-radius:3px;background:#fff;}
+.cel-nav-wrap{position:relative;}
+.cel-nav-prev,.cel-nav-next{position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.25);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;}
+.cel-nav-prev{left:6px}.cel-nav-next{right:6px}
+.cel-nav-prev svg,.cel-nav-next svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;}
 
 /* TODAY EVENTS STRIP */
 .today-strip{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);overflow:hidden;}
@@ -220,11 +241,11 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .cal-dow-row{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:4px;}
 .cal-dow{font-size:.6rem;font-weight:700;color:var(--t3);padding:4px 0;letter-spacing:.04em}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
-.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:9px;cursor:pointer;font-size:.82rem;font-weight:500;transition:all .12s;position:relative;}
+.cal-day{height:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:9px;cursor:pointer;font-size:.84rem;font-weight:500;transition:all .12s;position:relative;padding-bottom:5px;}
 .cal-day:active{transform:scale(.88)}
 .cal-day.empty{cursor:default}
 .cal-day.today{background:var(--blue-bg);color:var(--blue);font-weight:800;border:1px solid var(--blue-bd)}
-.cal-day.has-ev::after{content:'';position:absolute;bottom:3px;width:4px;height:4px;border-radius:50%;background:var(--blue);}
+.cal-day.has-ev::after{content:'';position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:var(--blue);}
 .cal-day.has-bd::after{background:var(--green)}
 .cal-day.has-an::after{background:var(--amber)}
 .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
@@ -232,6 +253,11 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .cal-nav-btn:active{background:var(--sf3);transform:scale(.88)}
 .cal-nav-btn svg{width:14px;height:14px;stroke:var(--t1);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
 .cal-month-lbl{font-size:1rem;font-weight:800;letter-spacing:-.3px}
+
+/* FONT SIZE BUTTONS */
+.fsbtn{padding:7px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .12s;}
+.fsbtn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.fsbtn:active{transform:scale(.93)}
 
 /* SEARCH */
 .search-bar{display:flex;align-items:center;gap:9px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:9px 13px;margin-bottom:12px;}
@@ -380,22 +406,32 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
     <div class="pshdr" onclick="toggleSec('pf-appear')">
       <div class="pshdr-l">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
-        <span class="pshdr-title">Theme</span>
+        <span class="pshdr-title">Theme &amp; Text Size</span>
       </div>
       <span class="scaret" id="caret-pf-appear"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
     </div>
     <div class="sbody" id="pf-appear" style="margin-bottom:14px">
       <div class="pcard">
         <div class="prow" style="flex-direction:column;align-items:flex-start;gap:10px">
+          <div style="font-size:.82rem;font-weight:600;color:var(--t1)">Theme</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%">
             <div id="th-dark" onclick="setTheme('dark')" style="padding:10px 8px;border-radius:var(--rl);border:2px solid var(--blue);background:var(--blue-bg);cursor:pointer;text-align:center"><div style="width:100%;height:22px;border-radius:6px;background:#0d0d10;border:1px solid #3a3a50;margin-bottom:6px"></div><div style="font-size:.72rem;font-weight:700;color:var(--blue)">Dark</div></div>
             <div id="th-soft" onclick="setTheme('soft-dark')" style="padding:10px 8px;border-radius:var(--rl);border:2px solid var(--bd);background:var(--sf2);cursor:pointer;text-align:center"><div style="width:100%;height:22px;border-radius:6px;background:#1a1a1f;border:1px solid #4c4c5c;margin-bottom:6px"></div><div style="font-size:.72rem;font-weight:700;color:var(--t3)">Soft</div></div>
             <div id="th-light" onclick="setTheme('light')" style="padding:10px 8px;border-radius:var(--rl);border:2px solid var(--bd);background:var(--sf2);cursor:pointer;text-align:center"><div style="width:100%;height:22px;border-radius:6px;background:#f2f2f7;border:1px solid #c8c8d8;margin-bottom:6px"></div><div style="font-size:.72rem;font-weight:700;color:var(--t3)">Light</div></div>
           </div>
         </div>
+        <div class="prow" style="flex-direction:column;align-items:flex-start;gap:10px;border-top:1px solid var(--bd2)">
+          <div style="font-size:.82rem;font-weight:600;color:var(--t1)">Text Size</div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:100%" id="fs-btns">
+            <button onclick="setFontSize(13)" data-sz="13" class="fsbtn">XS</button>
+            <button onclick="setFontSize(14)" data-sz="14" class="fsbtn">S</button>
+            <button onclick="setFontSize(16)" data-sz="16" class="fsbtn on">M</button>
+            <button onclick="setFontSize(18)" data-sz="18" class="fsbtn">L</button>
+            <button onclick="setFontSize(20)" data-sz="20" class="fsbtn">XL</button>
+          </div>
+        </div>
       </div>
     </div>
-
     <div class="plbl" style="margin-bottom:8px">WhatsApp Templates</div>
     <div class="pshdr" onclick="toggleSec('pf-tmpl')">
       <div class="pshdr-l">
@@ -594,10 +630,15 @@ function renderHome(){
   const upcoming=getUpcoming7();
   let html='';
 
-  // Stats card
+  // Build celebration cards for banner
+  const bannerCards=[];
+  todayEvs.forEach(({p,type})=>bannerCards.push({p,type,days:0}));
+  upcoming.slice(0,4).forEach(ev=>bannerCards.push(ev));
+
+  // Stats mini card (always shown)
   html+=`<div class="hero-card">
     <div class="hero-top">
-      <div class="lbl">Celebrations</div>
+      <div class="lbl">Event Book</div>
       <div style="font-size:2rem;font-weight:800;letter-spacing:-1px;line-height:1;margin-top:4px">${D.people.length}<span style="font-size:1rem;font-weight:600;color:var(--t3);margin-left:6px">People</span></div>
     </div>
     <div class="hero-grid">
@@ -606,6 +647,68 @@ function renderHome(){
       <div class="hero-cell"><div class="lbl">Favourites</div><div class="hero-cell-val" style="color:var(--amber)">${D.people.filter(p=>p.fav).length}</div></div>
     </div>
   </div>`;
+
+  // Celebration banner carousel
+  if(bannerCards.length>0){
+    html+=`<div id="cel-wrap" style="position:relative;margin-bottom:4px">`;
+    bannerCards.forEach((ev,i)=>{
+      const p=ev.p,isBd=ev.type==='birthday',days=ev.days;
+      const age=isBd?getAgeNextBday(p.dob):null;
+      const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
+      const gradients=isBd?[
+        'linear-gradient(135deg,#1d4ed8,#7c3aed)',
+        'linear-gradient(135deg,#065f46,#0891b2)',
+        'linear-gradient(135deg,#7c2d12,#b45309)',
+        'linear-gradient(135deg,#4c1d95,#be185d)'
+      ]:[
+        'linear-gradient(135deg,#92400e,#b45309)',
+        'linear-gradient(135deg,#831843,#9d174d)',
+        'linear-gradient(135deg,#1e3a5f,#1d4ed8)'
+      ];
+      const grad=gradients[i%gradients.length];
+      const eyebrow=days===0?(isBd?'🎂 Birthday Today!':'💍 Anniversary Today!'):(isBd?`🎂 Birthday in ${days} day${days>1?'s':''}`:`💍 Anniversary in ${days} day${days>1?'s':''}`);
+      const subLine=isBd?(age?`Turning ${age} years old`:'Celebrating today'):(yrs?`${yrs} beautiful years together`:'Celebrating together');
+      const avBg=avColor(p.name);
+      const avContent=p.photo?`<img src="${p.photo}"/>`:`${avInitials(p.name)}`;
+      html+=`<div class="cel-banner" id="cel-${i}" style="display:${i===0?'block':'none'}">
+        <div class="cel-banner-bg" style="background:${grad}"></div>
+        <div class="cel-banner-body">
+          <div class="cel-eyebrow">${eyebrow}</div>
+          <div class="cel-name">${p.name}</div>
+          <div class="cel-sub">${subLine}</div>
+          <div class="cel-row">
+            <div class="cel-badge">⏰ ${days===0?'Today':'In '+days+'d'}</div>
+            ${p.phone?`<button class="cel-wa-btn" onclick="openWishSheet('${p.id}','${ev.type}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+              Send Wish
+            </button>`:''}
+          </div>
+        </div>
+        <div class="cel-ava" style="background:${avBg}">${avContent}</div>
+      </div>`;
+    });
+    if(bannerCards.length>1){
+      html+=`<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:2px;margin-bottom:2px">
+        <button class="cel-nav-prev" onclick="celNav(-1)" style="position:static;transform:none;width:26px;height:26px;border-radius:50%;background:var(--sf3);border:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;justify-content:center">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="cel-dots" id="cel-dots" style="display:flex;gap:4px;align-items:center">
+          ${bannerCards.map((_,i)=>`<div class="cel-dot${i===0?' on':''}" id="cdot-${i}"></div>`).join('')}
+        </div>
+        <button class="cel-nav-next" onclick="celNav(1)" style="position:static;transform:none;width:26px;height:26px;border-radius:50%;background:var(--sf3);border:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;justify-content:center">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>`;
+    }
+    html+=`</div>`;
+    // Store card count for nav
+    html+=`<script>window._celTotal=${bannerCards.length};window._celIdx=0;<\/script>`;
+  } else {
+    html+=`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);padding:20px 16px;text-align:center;color:var(--t3);margin-bottom:4px">
+      <div style="font-size:1.4rem;margin-bottom:6px;opacity:.4">🎉</div>
+      <div style="font-size:.84rem">No upcoming celebrations.<br>Add people to see them here!</div>
+    </div>`;
+  }
 
   // Today section
   html+=`<div class="lbl" style="padding:0 2px">TODAY</div>`;
@@ -802,6 +905,8 @@ function renderSettings(){
   document.getElementById('st-today').textContent=getTodayEvents().length;
   document.getElementById('st-week').textContent=getUpcoming7().length;
   document.getElementById('st-fav').textContent=D.people.filter(p=>p.fav).length;
+  const savedFs=parseInt(localStorage.getItem('eb_fs'))||16;
+  document.querySelectorAll('.fsbtn').forEach(b=>{b.classList.toggle('on',parseInt(b.dataset.sz)===savedFs);});
 }
 
 // ══ NAVIGATION ══
@@ -816,6 +921,16 @@ function switchPage(page){
   else if(page==='people')renderPeople();
   else if(page==='calendar')renderCalendar();
   else if(page==='settings')renderSettings();
+}
+function celNav(dir){
+  const total=window._celTotal||0;if(total<=1)return;
+  window._celIdx=((window._celIdx||0)+dir+total)%total;
+  for(let i=0;i<total;i++){
+    const c=document.getElementById('cel-'+i);
+    const d=document.getElementById('cdot-'+i);
+    if(c)c.style.display=i===window._celIdx?'block':'none';
+    if(d)d.classList.toggle('on',i===window._celIdx);
+  }
 }
 function renderAll(){
   if(currentPage==='home')renderHome();
@@ -893,7 +1008,7 @@ function addPersonFormHtml(p){
   </div>
   <div class="fg">
     <label class="fl">ANNIVERSARY DATE</label>
-    <input class="fi" type="date" id="f-anniv" value="${p?p.anniv||'':''}"/>
+    <input class="fi" type="date" id="f-anniv" style="width:100%" value="${p?p.anniv||'':''}"/>
   </div>
   <div class="fg">
     <label class="fl">WHATSAPP NUMBER</label>
@@ -934,13 +1049,32 @@ function addPersonFormHtml(p){
 }
 
 function calcAgeDisplay(){
-  const dob=document.getElementById('f-dob')||{};
+  const dob=(document.getElementById('f-dob')||{});
   const b=document.getElementById('age-badge');
   const t=document.getElementById('age-text');
   if(!b||!dob.value){if(b)b.style.display='none';return;}
   const age=getAge(dob.value);
-  const next=getAgeNextBday(dob.value);
-  if(age!==null){t.textContent=`Currently ${age} yrs · Turning ${next} this year`;b.style.display='flex';}
+  if(age===null){if(b)b.style.display='none';return;}
+  const d=parseDate(dob.value);
+  const now=today();
+  const isBdayToday=d.getMonth()===now.getMonth()&&d.getDate()===now.getDate();
+  const nextAge=getAgeNextBday(dob.value); // age they turn on NEXT upcoming birthday
+  let msg;
+  if(isBdayToday){
+    msg=`Turning ${nextAge} today! 🎂`;
+  } else {
+    // nextAge > age means bday hasn't happened yet this year
+    // nextAge === age+1 always when bday is upcoming, nextAge === age+1 when past too (next year)
+    // We want: "Currently X · Turning Y this year" only if bday is still upcoming this year
+    const bdThisYear=new Date(now.getFullYear(),d.getMonth(),d.getDate());
+    const bdayUpcomingThisYear=bdThisYear>now;
+    if(bdayUpcomingThisYear){
+      msg=`Currently ${age} yrs · Turning ${nextAge} this year`;
+    } else {
+      msg=`Age ${age} · Next birthday turns ${nextAge}`;
+    }
+  }
+  t.textContent=msg;b.style.display='flex';
 }
 
 function savePerson(){
@@ -1161,6 +1295,14 @@ function loadSampleData(){
   save();renderAll();toast('Sample data loaded!');
 }
 
+function setFontSize(sz){
+  document.documentElement.style.fontSize=sz+'px';
+  localStorage.setItem('eb_fs',sz);
+  document.querySelectorAll('.fsbtn').forEach(b=>{
+    b.classList.toggle('on',parseInt(b.dataset.sz)===sz);
+  });
+}
+
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 // ══ INIT ══
@@ -1170,6 +1312,9 @@ function init(){
   setTheme(th);
   renderHome();
   if(D.people.length===0)setTimeout(()=>toast('Welcome! Tap + to add your first person'),800);
+  const savedFs=parseInt(localStorage.getItem('eb_fs'))||16;
+  if(savedFs!==16){document.documentElement.style.fontSize=savedFs+'px';}
+  // Sync font size buttons when settings renders
 }
 init();
 </script>
