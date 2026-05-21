@@ -11,18 +11,13 @@
 <meta name="theme-color" content="#0d0d10">
 <script>
 (function(){
-  // PNG icon baked in as data URI — Android Chrome requires a non-blob resolvable icon to avoid Chrome badge overlay
   const PNG_ICON='data:image/png;base64,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';
   const SVG_ICON='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExNSIgZmlsbD0iIzBkMGQxMCIvPjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTE1IiBmaWxsPSJ1cmwoI2cpIi8+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFkNGVkOCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzdjM2FlZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjx0ZXh0IHg9IjI1NiIgeT0iMzEwIiBmb250LXNpemU9IjIyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IndoaXRlIj7wn46CPC90ZXh0Pjwvc3ZnPg==';
-
-  // Manifest with PNG data URI — this is what Android Chrome uses for the home screen icon
   const mf=JSON.stringify({
     name:"Event Book",short_name:"Event Book",
     description:"Remember and send birthday & anniversary wishes",
-    start_url:"./",scope:"./",
-    display:"standalone",
-    background_color:"#0d0d10",theme_color:"#0d0d10",
-    orientation:"portrait",
+    start_url:"./",scope:"./",display:"standalone",
+    background_color:"#0d0d10",theme_color:"#0d0d10",orientation:"portrait",
     categories:["lifestyle","utilities"],
     icons:[
       {src:PNG_ICON,sizes:"192x192",type:"image/png",purpose:"any"},
@@ -31,21 +26,16 @@
   });
   const mb=new Blob([mf],{type:'application/json'});
   const ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(mb);document.head.appendChild(ml);
-  // Apple touch icon (iOS uses SVG fine via this tag)
   const al=document.createElement('link');al.rel='apple-touch-icon';al.href=SVG_ICON;document.head.appendChild(al);
-  // Service worker with cache-first strategy for offline support
   if('serviceWorker' in navigator){
     const sw=`
-      const CACHE='eb-v3';
-      const ASSETS=['/'];
-      self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).catch(()=>{}))});
+      const CACHE='eb-v4';
+      self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/']).catch(()=>{})))});
       self.addEventListener('activate',e=>{e.waitUntil(clients.claim())});
       self.addEventListener('fetch',e=>{
         if(e.request.method!=='GET')return;
         e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(r=>{
-          const rc=r.clone();
-          caches.open(CACHE).then(c=>c.put(e.request,rc));
-          return r;
+          const rc=r.clone();caches.open(CACHE).then(c=>c.put(e.request,rc));return r;
         }).catch(()=>cached)));
       });
     `;
@@ -99,19 +89,17 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
   padding-bottom:13px;padding-left:16px;padding-right:16px;
   display:flex;align-items:center;justify-content:center;
 }
-/* Android standalone PWA: no top border, ensure status bar area is clean */
 @media (display-mode:standalone){
-  html{border-top:none!important}
-  .hdr{border-top:none!important;box-shadow:none}
-  body::before{display:none!important}
+  .hdr{border-top:none!important}
+  html,body{border-top:none!important}
 }
 .hdr-in{width:100%;max-width:480px;display:flex;align-items:center;justify-content:space-between;}
-.hdr-l{display:flex;align-items:center;gap:10px}
+.hdr-l{display:flex;align-items:center;gap:10px;flex:1;min-width:0;overflow:hidden}
 .avi{width:2.2rem;height:2.2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;cursor:pointer;border:none;color:#fff;transition:transform 180ms var(--spring);flex-shrink:0;}
 .avi:active{transform:scale(.9)}
-.hdr-gr{font-size:.72rem;color:var(--t3);font-weight:400;line-height:1}
-.hdr-nm{font-size:1.18rem;font-weight:800;color:var(--t1);letter-spacing:-.4px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100vw - 130px)}
-.hdr-r{display:flex;align-items:center;gap:8px}
+.hdr-gr{font-size:.72rem;color:var(--t3);font-weight:400;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-nm{font-size:clamp(.9rem,1.18rem,1.18rem);font-weight:800;color:var(--t1);letter-spacing:-.4px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .hdr-icon-btn{width:32px;height:32px;border-radius:50%;background:var(--sf2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 120ms;}
 .hdr-icon-btn:active{transform:scale(.9);background:var(--sf3)}
 
@@ -310,9 +298,34 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .search-bar input{flex:1;background:none;border:none;outline:none;color:var(--t1);font-family:'Inter',sans-serif;font-size:.9rem;font-weight:500;}
 .search-bar input::placeholder{color:var(--t3)}
 
-/* SORT CHIPS */
-.sort-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;}
-.sort-row::-webkit-scrollbar{display:none}
+/* FILTER BAR — segmented tabs + sort pill */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.seg-ctrl{flex:1;display:flex;align-items:center;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:3px;gap:2px;min-width:0;}
+.seg-btn{flex:1;padding:6px 2px;border-radius:7px;font-size:.7rem;font-weight:700;border:none;background:transparent;color:var(--t3);cursor:pointer;transition:all .15s var(--spring);font-family:'Inter',sans-serif;white-space:nowrap;text-align:center;}
+.seg-btn.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.35);}
+.sort-wrap{position:relative;flex-shrink:0;}
+.sort-pill{display:flex;align-items:center;gap:5px;padding:7px 10px;border-radius:10px;border:1px solid var(--bd);background:var(--sf2);color:var(--t3);cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;white-space:nowrap;user-select:none;}
+.sort-pill.active{background:var(--blue-bg);border-color:var(--blue-bd);color:var(--blue);}
+.sort-pill svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;transition:transform .2s;}
+.sort-pill .caret{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;transition:transform .2s;}
+.sort-pill.open .caret{transform:rotate(180deg);}
+/* Dropdown */
+.sort-dropdown{position:absolute;top:calc(100% + 6px);right:0;z-index:300;
+  background:var(--sf);border:1px solid var(--bd);border-radius:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,.55);min-width:148px;overflow:hidden;
+  opacity:0;transform:translateY(-6px) scale(.96);pointer-events:none;
+  transition:opacity .18s var(--ease),transform .18s var(--ease);}
+.sort-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
+.sort-opt{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;font-family:'Inter',sans-serif;font-size:.76rem;font-weight:600;
+  color:var(--t2);cursor:pointer;transition:background .1s;gap:10px;}
+.sort-opt:not(:last-child){border-bottom:1px solid var(--bd2);}
+.sort-opt:active{background:var(--sf2);}
+.sort-opt.chosen{color:var(--blue);}
+.sort-opt-ico{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;}
+.sort-opt .check{width:13px;height:13px;stroke:var(--blue);fill:none;stroke-width:2.5;stroke-linecap:round;opacity:0;}
+.sort-opt.chosen .check{opacity:1;}
+/* Keep old chip class as fallback — unused but harmless */
 .chip{flex-shrink:0;padding:5px 12px;border-radius:99px;font-size:.72rem;font-weight:700;border:1px solid var(--bd);background:var(--sf2);color:var(--t3);cursor:pointer;transition:all .12s;}
 .chip.active{background:var(--blue-bg);border-color:var(--blue-bd);color:var(--blue)}
 
@@ -371,7 +384,7 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
   <div class="hdr"><div class="hdr-in">
     <div class="hdr-l">
       <button class="avi" id="home-avi" style="background:var(--blue);overflow:hidden" onclick="switchPage('settings')">E</button>
-      <div>
+      <div style="min-width:0;overflow:hidden">
         <div class="hdr-gr" id="hdr-gr">Good morning 👋</div>
         <div class="hdr-nm" id="hdr-nm">Event Book</div>
       </div>
@@ -408,13 +421,42 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input id="search-inp" type="text" placeholder="Search by name or relation…" oninput="renderPeople()"/>
     </div>
-    <div class="sort-row" id="sort-row">
-      <div class="chip active" data-sort="all">All</div>
-      <div class="chip" data-sort="groups">Groups</div>
-      <div class="chip" data-sort="upcoming">Upcoming</div>
-      <div class="chip" data-sort="name">A–Z</div>
-      <div class="chip" data-sort="age">Age</div>
-      <div class="chip" data-sort="fav">Favourites</div>
+    <div class="filter-bar" id="sort-row">
+      <div class="seg-ctrl" id="seg-ctrl">
+        <button class="seg-btn" data-sort="all">All</button>
+        <button class="seg-btn active" data-sort="groups">Groups</button>
+        <button class="seg-btn" data-sort="upcoming">Upcoming</button>
+        <button class="seg-btn" data-sort="fav">Favs ⭐</button>
+      </div>
+      <div class="sort-wrap" id="sort-wrap">
+        <div class="sort-pill" id="sort-pill" onclick="toggleSortDropdown()">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
+          <span id="sort-pill-lbl">Sort</span>
+          <svg class="caret" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="sort-dropdown" id="sort-dropdown">
+          <div class="sort-opt" data-mode="0" onclick="applySortMode(0)">
+            <span>Default (by date)</span>
+            <svg class="check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="sort-opt chosen" data-mode="1" onclick="applySortMode(1)">
+            <span>A → Z</span>
+            <svg class="check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="sort-opt" data-mode="2" onclick="applySortMode(2)">
+            <span>Z → A</span>
+            <svg class="check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="sort-opt" data-mode="3" onclick="applySortMode(3)">
+            <span>Age (youngest)</span>
+            <svg class="check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="sort-opt" data-mode="4" onclick="applySortMode(4)">
+            <span>Age (oldest)</span>
+            <svg class="check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+      </div>
     </div>
     <div id="people-list"></div>
   </div>
@@ -616,7 +658,7 @@ const DEFAULT_TEMPLATES={
 // ══ STATE ══
 let D={};
 let calDate=new Date();
-let currentSort='all';
+let currentSort='groups';
 let currentPage='home';
 let editingPersonId=null;
 let wishPerson=null;
@@ -956,7 +998,6 @@ function renderPeople(){
 }
 
 function buildExpandedPanel(p){
-  const col=CAT_COLORS[p.category]||'#64748b';
   const ageNext=getAgeNextBday(p.dob);
   const yrsNext=getYearsNextAnniv(p.anniv);
   const bdDays=p.dob?daysUntil(p.dob):null;
@@ -964,35 +1005,16 @@ function buildExpandedPanel(p){
   let dateRows='';
   if(p.dob){
     const dLabel=bdDays===0?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--gbg);color:var(--green);border:1px solid var(--gbd)">🎉 Today!</span>`:bdDays<=7?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25)">in ${bdDays}d</span>`:'';
-    dateRows+=`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--bd2)">
-      <div style="width:28px;height:28px;border-radius:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem">🎂</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:.78rem;font-weight:700;color:var(--t1)">${fmtFull(p.dob)}</div>
-        <div style="font-size:.65rem;color:var(--t3);margin-top:1px">Birthday · Turns ${ageNext}</div>
-      </div>${dLabel}</div>`;
+    dateRows+=`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--bd2)"><div style="width:28px;height:28px;border-radius:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem">🎂</div><div style="flex:1;min-width:0"><div style="font-size:.78rem;font-weight:700;color:var(--t1)">${fmtFull(p.dob)}</div><div style="font-size:.65rem;color:var(--t3);margin-top:1px">Birthday · Turns ${ageNext}</div></div>${dLabel}</div>`;
   }
   if(p.anniv){
     const aLabel=anDays===0?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--gbg);color:var(--green);border:1px solid var(--gbd)">🎉 Today!</span>`:anDays<=7?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25)">in ${anDays}d</span>`:'';
-    dateRows+=`<div style="display:flex;align-items:center;gap:9px;padding:7px 0">
-      <div style="width:28px;height:28px;border-radius:8px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem">💍</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:.78rem;font-weight:700;color:var(--t1)">${fmtFull(p.anniv)}</div>
-        <div style="font-size:.65rem;color:var(--t3);margin-top:1px">Anniversary · ${yrsNext} yr${yrsNext!==1?'s':''} together</div>
-      </div>${aLabel}</div>`;
+    dateRows+=`<div style="display:flex;align-items:center;gap:9px;padding:7px 0"><div style="width:28px;height:28px;border-radius:8px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem">💍</div><div style="flex:1;min-width:0"><div style="font-size:.78rem;font-weight:700;color:var(--t1)">${fmtFull(p.anniv)}</div><div style="font-size:.65rem;color:var(--t3);margin-top:1px">Anniversary · ${yrsNext} yr${yrsNext!==1?'s':''} together</div></div>${aLabel}</div>`;
   }
   if(!p.dob&&!p.anniv) dateRows=`<div style="font-size:.75rem;color:var(--t3);padding:8px 0;text-align:center">No dates added yet</div>`;
-  const phoneRow=p.phone?`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px solid var(--bd2)">
-    <div style="width:28px;height:28px;border-radius:8px;background:var(--blue-bg);border:1px solid var(--blue-bd);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg></div>
-    <div style="font-size:.78rem;font-weight:600;color:var(--t1);flex:1">${p.phone}</div>
-    <a href="tel:${p.phone}" style="display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:7px;background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);font-size:.7rem;font-weight:700;text-decoration:none">Call</a>
-  </div>`:'';
+  const phoneRow=p.phone?`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px solid var(--bd2)"><div style="width:28px;height:28px;border-radius:8px;background:var(--blue-bg);border:1px solid var(--blue-bd);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg></div><div style="font-size:.78rem;font-weight:600;color:var(--t1);flex:1">${p.phone}</div><a href="tel:${p.phone}" style="display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:7px;background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);font-size:.7rem;font-weight:700;text-decoration:none">Call</a></div>`:'';
   const wishBtn=p.phone?`<button onclick="openWishSheetAuto('${p.id}')" style="width:100%;padding:11px;border-radius:10px;border:none;cursor:pointer;background:#25d366;color:#fff;font-family:'Inter',sans-serif;font-size:.86rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 12px rgba(37,211,102,.35);transition:all .12s;margin-bottom:8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>Send Wish on WhatsApp</button>`:'';
-  return`<div style="border-top:1px solid var(--bd2);background:var(--sf2);padding:12px 14px 12px">
-    <div style="background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:10px">${dateRows}${phoneRow}</div>
-    ${wishBtn}<div style="display:flex;gap:8px">
-      <button onclick="openSheet('add-person','${p.id}')" style="flex:1;padding:9px;border-radius:9px;border:1px solid var(--bd);background:var(--sf3);color:var(--t2);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
-      <button onclick="deletePerson('${p.id}')" style="flex:1;padding:9px;border-radius:9px;border:1px solid rgba(248,113,113,.25);background:var(--rbg);color:var(--red);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>Delete</button>
-    </div></div>`;
+  return`<div style="border-top:1px solid var(--bd2);background:var(--sf2);padding:12px 14px"><div style="background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:10px">${dateRows}${phoneRow}</div>${wishBtn}<div style="display:flex;gap:8px"><button onclick="openSheet('add-person','${p.id}')" style="flex:1;padding:9px;border-radius:9px;border:1px solid var(--bd);background:var(--sf3);color:var(--t2);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button><button onclick="deletePerson('${p.id}')" style="flex:1;padding:9px;border-radius:9px;border:1px solid rgba(248,113,113,.25);background:var(--rbg);color:var(--red);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>Delete</button></div></div>`;
 }
 
 function flatPersonRowHtml(p){
@@ -1009,12 +1031,7 @@ function flatPersonRowHtml(p){
   const subParts=[bdLine,anLine,p.relation].filter(Boolean);
   return`<div class="ritem" style="flex-direction:column;align-items:stretch;padding:0;cursor:default">
     <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer" onclick="togglePersonActions('pa-${p.id}')">
-      ${avHtml(p,36,10)}<div class="rbody">
-        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-          <span class="rtitle">${p.name}${p.fav?' ⭐':''}</span>${catPill}${ageBadge}${nextLabel}
-        </div>
-        <div class="rsub">${subParts.join(' · ')||'No dates added'}</div>
-      </div>
+      ${avHtml(p,36,10)}<div class="rbody"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span class="rtitle">${p.name}${p.fav?' ⭐':''}</span>${catPill}${ageBadge}${nextLabel}</div><div class="rsub">${subParts.join(' · ')||'No dates added'}</div></div>
       <svg id="pc-${p.id}" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;transition:transform .25s var(--ease)"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
     <div id="pa-${p.id}" style="display:none">${buildExpandedPanel(p)}</div>
@@ -1026,17 +1043,21 @@ function personRowHtml(p){
   const bdDays=p.dob?daysUntil(p.dob):null;
   const anDays=p.anniv?daysUntil(p.anniv):null;
   const nextDays=Math.min(...[bdDays,anDays].filter(d=>d!==null).concat([9999]));
+  // Age badge inline blue
   const ageBadge=age!==null?`<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${age}y</span>`:'';
   const nextLabel=nextDays===0?`<span style="font-size:.6rem;font-weight:700;background:var(--gbg);color:var(--green);border:1px solid var(--gbd);padding:1px 6px;border-radius:99px">Today!</span>`:nextDays<=7?`<span style="font-size:.6rem;font-weight:700;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25);padding:1px 6px;border-radius:99px">${nextDays}d</span>`:'';
   const bdLine=p.dob?`🎂 ${fmtShort(p.dob)}`:'';
   const anLine=p.anniv?`💍 ${fmtShort(p.anniv)}`:'';
   const relLine=p.relation||'';
   const subParts=[bdLine,anLine,relLine].filter(Boolean);
+
   return`<div class="ritem" style="flex-direction:column;align-items:stretch;padding:0;cursor:default">
     <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer" onclick="togglePersonActions('pa-${p.id}')">
-      ${avHtml(p,36,10)}<div class="rbody">
+      ${avHtml(p,36,10)}
+      <div class="rbody">
         <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-          <span class="rtitle">${p.name}${p.fav?' ⭐':''}</span>${ageBadge}${nextLabel}
+          <span class="rtitle">${p.name}${p.fav?' ⭐':''}</span>
+          ${ageBadge}${nextLabel}
         </div>
         <div class="rsub">${subParts.join(' · ')||'No dates added'}</div>
       </div>
@@ -1051,6 +1072,7 @@ function togglePersonActions(id){
   const caret=document.getElementById('pc-'+pid);
   if(!panel)return;
   const open=panel.style.display==='block';
+  // Close any other open panels first
   document.querySelectorAll('[id^="pa-"]').forEach(p=>{
     if(p.id!==id&&p.style.display==='block'){
       p.style.display='none';
@@ -1568,26 +1590,66 @@ function saveTmpls(){
   save();closeSheet();toast('Templates saved');
 }
 
-// ══ SORT CHIPS ══
+// ══ FILTER BAR — segmented tabs + sort dropdown ══
+let sortMode=0; // 0=default,1=A-Z,2=Z-A,3=Age young,4=Age old
+const SORT_CFG=[
+  {label:'Sort',  key:null,   dir:1},
+  {label:'A → Z', key:'name', dir:1},
+  {label:'Z → A', key:'name', dir:-1},
+  {label:'Age ↑', key:'age',  dir:1},
+  {label:'Age ↓', key:'age',  dir:-1},
+];
+
+function toggleSortDropdown(){
+  const dd=document.getElementById('sort-dropdown');
+  const pill=document.getElementById('sort-pill');
+  if(!dd)return;
+  const isOpen=dd.classList.contains('open');
+  if(isOpen){closeSortDropdown();}
+  else{dd.classList.add('open');pill.classList.add('open');}
+}
+function closeSortDropdown(){
+  const dd=document.getElementById('sort-dropdown');
+  const pill=document.getElementById('sort-pill');
+  if(dd)dd.classList.remove('open');
+  if(pill)pill.classList.remove('open');
+}
+function applySortMode(mode){
+  sortMode=mode;
+  closeSortDropdown();
+  const cfg=SORT_CFG[mode];
+  const pill=document.getElementById('sort-pill');
+  const lbl=document.getElementById('sort-pill-lbl');
+  // Update pill label + active state
+  if(lbl)lbl.textContent=cfg.label;
+  if(pill)pill.classList.toggle('active', mode!==0);
+  // Update checkmarks in dropdown
+  document.querySelectorAll('.sort-opt').forEach(opt=>{
+    opt.classList.toggle('chosen', parseInt(opt.dataset.mode)===mode);
+  });
+  // Apply sort
+  if(mode===0){
+    if(currentSort==='name'||currentSort==='age') currentSort='all';
+  } else {
+    currentSort=cfg.key;
+    sortDir[cfg.key]=cfg.dir;
+  }
+  renderPeople();
+}
+
+// Close dropdown when clicking outside
 document.addEventListener('click',e=>{
-  if(e.target.classList.contains('chip')&&e.target.closest('#sort-row')){
-    const newSort=e.target.dataset.sort||'all';
-    // Toggle direction if same chip tapped again (name/age only)
-    if(newSort===currentSort&&(newSort==='name'||newSort==='age')){
-      sortDir[newSort]*=-1;
-    }
-    // Reset all chip labels first
-    document.querySelectorAll('#sort-row .chip').forEach(c=>{
-      c.classList.remove('active');
-      if(c.dataset.sort==='name')c.textContent='A–Z';
-      if(c.dataset.sort==='age')c.textContent='Age';
-    });
-    currentSort=newSort;
-    // Show direction arrow on active sortable chips
-    if(newSort==='name')e.target.textContent=sortDir.name===1?'A–Z ↑':'Z–A ↓';
-    if(newSort==='age') e.target.textContent=sortDir.age===1?'Age ↑':'Age ↓';
-    e.target.classList.add('active');
-    renderPeople();
+  if(!e.target.closest('#sort-wrap')) closeSortDropdown();
+
+  // Segmented tab clicks
+  const btn=e.target.closest('.seg-btn');
+  if(btn&&btn.closest('#sort-row')){
+    const newSort=btn.dataset.sort||'all';
+    document.querySelectorAll('#seg-ctrl .seg-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    // Reset sort to default when switching tabs
+    if(sortMode!==0) applySortMode(0);
+    else{ currentSort=newSort; renderPeople(); }
   }
 });
 
