@@ -727,6 +727,19 @@ function getYearsNextAnniv(s){
   if(next<now)next.setFullYear(next.getFullYear()+1);
   return next.getFullYear()-d.getFullYear();
 }
+// Age they turn ON their birthday in a specific month/year (for calendar view)
+function getAgeInMonth(s, year, month){
+  if(!s)return null;
+  const d=parseDate(s);
+  // The birthday falls in this month — return age they turn that day
+  return year - d.getFullYear();
+}
+// Years together ON their anniversary in a specific month/year
+function getYearsInMonth(s, year, month){
+  if(!s)return null;
+  const d=parseDate(s);
+  return year - d.getFullYear();
+}
 function fmtShort(s){if(!s)return'';const d=parseDate(s);return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});}
 function fmtFull(s){if(!s)return'';const d=parseDate(s);return d.toLocaleDateString('en-IN',{day:'numeric',month:'long'});}
 function nextEventDays(p){
@@ -1115,7 +1128,7 @@ function renderCalendar(){
   list.innerHTML=`<div class="rlist">${evs.map(e=>{
     const isBd=e.type==='birthday';
     const col=isBd?'var(--green)':'var(--amber)';
-    const age=isBd?getAgeNextBday(e.p.dob):getYearsNextAnniv(e.p.anniv);
+    const age=isBd?getAgeInMonth(e.p.dob,y,m):getYearsInMonth(e.p.anniv,y,m);
     return`<div class="ritem">
       <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;margin:0 2px"></div>
       ${avHtml(e.p,34,9)}
