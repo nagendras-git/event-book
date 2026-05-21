@@ -157,7 +157,7 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .btn-d{color:var(--red);background:var(--rbg);border:1px solid rgba(248,113,113,.3);}
 .frow2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .phone-wrap{display:flex;gap:8px}
-.phone-cc{width:80px;flex-shrink:0}
+.phone-cc{width:96px;flex-shrink:0}
 
 /* EMPTY STATE */
 .empty{text-align:center;padding:28px 16px;color:var(--t3)}
@@ -209,9 +209,9 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .hero-cell-val{font-size:1rem;font-weight:800;letter-spacing:-.3px;margin-top:3px;}
 
 /* HERO CELEBRATION BANNER */
-.cel-banner{border-radius:var(--rx);overflow:hidden;margin-bottom:6px;position:relative;min-height:130px;}
+.cel-banner{border-radius:var(--rx);overflow:hidden;margin-bottom:6px;position:relative;}
 .cel-banner-bg{position:absolute;inset:0;}
-.cel-banner-body{position:relative;z-index:1;padding:18px 16px 16px;padding-right:88px;}
+.cel-banner-body{position:relative;z-index:1;padding:16px;padding-right:82px;min-height:120px;}
 .cel-eyebrow{font-size:.6rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;opacity:.75;margin-bottom:5px;color:#fff;}
 .cel-name{font-size:1.3rem;font-weight:800;letter-spacing:-.3px;line-height:1.15;color:#fff;margin-bottom:3px;}
 .cel-sub{font-size:.76rem;opacity:.82;color:#fff;margin-bottom:13px;line-height:1.4;}
@@ -316,6 +316,33 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .wish-action-btn{flex:1;padding:9px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .12s;}
 .wish-action-btn:active{background:var(--sf3)}
 .age-badge{display:flex;align-items:center;gap:7px;padding:8px 11px;background:var(--blue-bg);border:1px solid var(--blue-bd);border-radius:9px;font-size:.78rem;color:var(--blue);font-weight:600;margin-top:7px;}
+
+/* ── Custom Calendar Picker (from reference design) ── */
+.cal-wrap{position:relative;margin-bottom:0}
+.cal-display{width:100%;padding:10px 12px;border:1px solid var(--bd);border-radius:var(--r);background:var(--sf2);color:var(--t1);font-family:'Inter',sans-serif;font-size:.9rem;font-weight:500;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border-color 150ms;user-select:none;-webkit-user-select:none}
+.cal-display.empty{color:var(--t3)}
+.cal-display svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.55}
+.cal-popup{position:absolute;left:0;right:0;z-index:600;margin-top:5px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:calIn .15s var(--ease) both}
+@keyframes calIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid var(--bd2)}
+.cal-nav-btn{width:28px;height:28px;border-radius:8px;border:1px solid var(--bd);background:var(--sf2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2);transition:background 120ms;font-size:.85rem;flex-shrink:0;font-family:inherit}
+.cal-nav-btn:active{background:var(--sf3)}
+.cal-yr-label{font-size:.86rem;font-weight:700;color:var(--t1);cursor:pointer;padding:3px 8px;border-radius:6px;transition:background 120ms}
+.cal-yr-label:active{background:var(--sf2)}
+.cal-yr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding:8px;max-height:150px;overflow-y:auto}
+.cal-yr-item{padding:6px 2px;border-radius:6px;text-align:center;font-size:.76rem;font-weight:600;cursor:pointer;color:var(--t2);transition:background 100ms}
+.cal-yr-item:active{background:var(--sf2);color:var(--t1)}
+.cal-yr-item.sel{background:var(--t1);color:var(--bg)}
+.eb-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0;padding:4px 5px}
+.cal-dow{font-size:.56rem;font-weight:700;color:var(--t3);text-align:center;padding:3px 0 2px}
+.cal-day{width:100%;aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:500;cursor:pointer;color:var(--t1);transition:background 100ms}
+.cal-day:not(.cal-empty):active{background:var(--sf2)}
+.cal-day.cal-today{color:var(--green);font-weight:700}
+.cal-day.cal-sel{background:var(--blue)!important;color:#fff;font-weight:700;border-radius:8px}
+.cal-day.cal-other{color:var(--t3)}
+.cal-day.cal-empty{cursor:default}
+.cal-clear{padding:8px;border-top:1px solid var(--bd2);text-align:center;font-size:.74rem;color:var(--t3);cursor:pointer;background:none;border-left:none;border-right:none;border-bottom:none;font-family:inherit;width:100%;transition:color 120ms}
+.cal-clear:active{color:var(--red)}
 </style>
 </head>
 <body>
@@ -930,33 +957,37 @@ function renderPeople(){
 }
 
 function flatPersonRowHtml(p){
+  // Same caret-expand design as personRowHtml but with category pill
   const col=CAT_COLORS[p.category]||'#64748b';
   const age=getAge(p.dob);
   const bdDays=p.dob?daysUntil(p.dob):null;
   const anDays=p.anniv?daysUntil(p.anniv):null;
   const nextDays=Math.min(...[bdDays,anDays].filter(d=>d!==null).concat([9999]));
+  const ageBadge=age!==null?`<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${age}y</span>`:'';
   const nextLabel=nextDays===0
     ?`<span style="font-size:.6rem;font-weight:700;background:var(--gbg);color:var(--green);border:1px solid var(--gbd);padding:1px 6px;border-radius:99px">Today!</span>`
     :nextDays<=7
-    ?`<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${nextDays}d</span>`:'';
-  const details=[];
-  if(p.dob)details.push(`🎂 ${fmtShort(p.dob)}${age!==null?' ('+age+'y)':''}`);
-  if(p.anniv)details.push(`💍 ${fmtShort(p.anniv)}`);
-  if(p.relation)details.push(p.relation);
-  return`<div class="ritem">
-    ${avHtml(p,36,10)}
-    <div class="rbody">
-      <div class="rtitle" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-        <span>${p.name}${p.fav?' ⭐':''}</span>
-        <span style="font-size:.58rem;font-weight:700;padding:1px 6px;border-radius:99px;background:${col}20;color:${col};border:1px solid ${col}40;flex-shrink:0">${p.category}</span>
+    ?`<span style="font-size:.6rem;font-weight:700;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25);padding:1px 6px;border-radius:99px">${nextDays}d</span>`:'';
+  const bdLine=p.dob?`🎂 ${fmtShort(p.dob)}`:'';
+  const anLine=p.anniv?`💍 ${fmtShort(p.anniv)}`:'';
+  const catPill=`<span style="font-size:.58rem;font-weight:700;padding:1px 6px;border-radius:99px;background:${col}20;color:${col};border:1px solid ${col}40;flex-shrink:0">${p.category}</span>`;
+  const subParts=[bdLine,anLine,p.relation].filter(Boolean);
+  return`<div class="ritem" style="flex-direction:column;align-items:stretch;padding:0;cursor:default">
+    <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer" onclick="togglePersonActions('pa-${p.id}')">
+      ${avHtml(p,36,10)}
+      <div class="rbody">
+        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+          <span class="rtitle">${p.name}${p.fav?' ⭐':''}</span>
+          ${catPill}${ageBadge}${nextLabel}
+        </div>
+        <div class="rsub">${subParts.join(' · ')||'No dates added'}</div>
       </div>
-      <div class="rsub">${details.join(' · ')||'No dates added'}</div>
+      <svg id="pc-${p.id}" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;transition:transform .2s var(--ease)"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
-    <div class="rright">
-      ${nextLabel}
-      ${p.phone?`<div class="rib wa" onclick="openWishSheetAuto('${p.id}')"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>`:''}
-      <div class="rib" onclick="openSheet('add-person','${p.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-      <div class="rib del" onclick="deletePerson('${p.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg></div>
+    <div id="pa-${p.id}" style="display:none;border-top:1px solid var(--bd2);padding:8px 14px;gap:8px;flex-wrap:wrap">
+      ${p.phone?`<button style="flex:1;min-width:80px;padding:8px 10px;border-radius:var(--r);border:none;background:var(--gbg);color:var(--green);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;border:1px solid var(--gbd)" onclick="openWishSheetAuto('${p.id}')">💬 Send Wish</button>`:''}
+      <button style="flex:1;min-width:60px;padding:8px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer" onclick="openSheet('add-person','${p.id}')">✏️ Edit</button>
+      <button style="flex:1;min-width:60px;padding:8px 10px;border-radius:var(--r);border:1px solid rgba(248,113,113,.3);background:var(--rbg);color:var(--red);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer" onclick="deletePerson('${p.id}')">🗑️ Delete</button>
     </div>
   </div>`;
 }
@@ -966,25 +997,41 @@ function personRowHtml(p){
   const bdDays=p.dob?daysUntil(p.dob):null;
   const anDays=p.anniv?daysUntil(p.anniv):null;
   const nextDays=Math.min(...[bdDays,anDays].filter(d=>d!==null).concat([9999]));
-  const nextLabel=nextDays===0?`<span style="font-size:.6rem;font-weight:700;background:var(--gbg);color:var(--green);border:1px solid var(--gbd);padding:1px 6px;border-radius:99px;margin-left:4px">Today!</span>`:nextDays<=7?`<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px;margin-left:4px">${nextDays}d</span>`:'';
-  const details=[];
-  if(p.dob)details.push(`🎂 ${fmtShort(p.dob)}${age!==null?' ('+age+'y)':''}`);
-  if(p.anniv)details.push(`💍 ${fmtShort(p.anniv)}`);
-  if(p.relation)details.push(p.relation);
+  // Age badge inline blue
+  const ageBadge=age!==null?`<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${age}y</span>`:'';
+  const nextLabel=nextDays===0?`<span style="font-size:.6rem;font-weight:700;background:var(--gbg);color:var(--green);border:1px solid var(--gbd);padding:1px 6px;border-radius:99px">Today!</span>`:nextDays<=7?`<span style="font-size:.6rem;font-weight:700;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25);padding:1px 6px;border-radius:99px">${nextDays}d</span>`:'';
+  const bdLine=p.dob?`🎂 ${fmtShort(p.dob)}`:'';
+  const anLine=p.anniv?`💍 ${fmtShort(p.anniv)}`:'';
+  const relLine=p.relation||'';
+  const subParts=[bdLine,anLine,relLine].filter(Boolean);
 
-  return`<div class="ritem">
-    ${avHtml(p,36,10)}
-    <div class="rbody">
-      <div class="rtitle">${p.name}${p.fav?' ⭐':''}</div>
-      <div class="rsub">${details.join(' · ')||'No dates added'}</div>
+  return`<div class="ritem" style="flex-direction:column;align-items:stretch;padding:0;cursor:default">
+    <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer" onclick="togglePersonActions('pa-${p.id}')">
+      ${avHtml(p,36,10)}
+      <div class="rbody">
+        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+          <span class="rtitle">${p.name}${p.fav?' ⭐':''}</span>
+          ${ageBadge}${nextLabel}
+        </div>
+        <div class="rsub">${subParts.join(' · ')||'No dates added'}</div>
+      </div>
+      <svg id="pc-${p.id}" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;transition:transform .2s var(--ease)"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
-    <div class="rright">
-      ${nextLabel}
-      ${p.phone?`<div class="rib wa" onclick="openWishSheetAuto('${p.id}')"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>`:''}
-      <div class="rib" onclick="openSheet('add-person','${p.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-      <div class="rib del" onclick="deletePerson('${p.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg></div>
+    <div id="pa-${p.id}" style="display:none;border-top:1px solid var(--bd2);padding:8px 14px;gap:8px;flex-wrap:wrap">
+      ${p.phone?`<button style="flex:1;min-width:80px;padding:8px 10px;border-radius:var(--r);border:none;background:var(--gbg);color:var(--green);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;border:1px solid var(--gbd)" onclick="openWishSheetAuto('${p.id}')">💬 Send Wish</button>`:''}
+      <button style="flex:1;min-width:60px;padding:8px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer" onclick="openSheet('add-person','${p.id}')">✏️ Edit</button>
+      <button style="flex:1;min-width:60px;padding:8px 10px;border-radius:var(--r);border:1px solid rgba(248,113,113,.3);background:var(--rbg);color:var(--red);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer" onclick="deletePerson('${p.id}')">🗑️ Delete</button>
     </div>
   </div>`;
+}
+function togglePersonActions(id){
+  const panel=document.getElementById(id);
+  const pid=id.replace('pa-','');
+  const caret=document.getElementById('pc-'+pid);
+  if(!panel)return;
+  const open=panel.style.display==='flex';
+  panel.style.display=open?'none':'flex';
+  if(caret)caret.style.transform=open?'':'rotate(180deg)';
 }
 
 // ══ CALENDAR ══
@@ -1104,6 +1151,8 @@ function openSheet(type,arg){
     const p=arg?D.people.find(x=>x.id===arg):null;
     editingPersonId=p?p.id:null;
     shTitle.textContent=p?'Edit Person':'Add Person';
+    window._fDob=p?p.dob||'':'';
+    window._fAnniv=p?p.anniv||'':'';
     shBody.innerHTML=addPersonFormHtml(p);
     if(p&&p.dob)calcAgeDisplay();
     showSheet();
@@ -1143,18 +1192,12 @@ function addPersonFormHtml(p){
     <label class="fl">RELATIONSHIP</label>
     <input class="fi" id="f-rel" placeholder="Brother, Friend, Uncle…" value="${p?esc(p.relation||''):''}"/>
   </div>
-  <div class="fg">
-    <label class="fl">DATE OF BIRTH</label>
-    <input class="fi" type="date" id="f-dob" value="${p?p.dob||'':''}" onchange="calcAgeDisplay()"/>
-    <div id="age-badge" style="display:none" class="age-badge">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 7H4a2 2 0 00-2 2v9a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-      <span id="age-text"></span>
-    </div>
+  ${calFieldHtml('f-dob','DATE OF BIRTH',p?p.dob||'':'','(v)=>{window._fDob=v;calcAgeDisplay()}')}
+  <div id="age-badge" style="display:none" class="age-badge">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 7H4a2 2 0 00-2 2v9a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+    <span id="age-text"></span>
   </div>
-  <div class="fg">
-    <label class="fl">ANNIVERSARY DATE</label>
-    <input class="fi" type="date" id="f-anniv" style="width:100%" value="${p?p.anniv||'':''}"/>
-  </div>
+  ${calFieldHtml('f-anniv','ANNIVERSARY DATE',p?p.anniv||'':'','(v)=>{window._fAnniv=v}')}
   <div class="fg">
     <label class="fl">WHATSAPP NUMBER</label>
     <div class="phone-wrap">
@@ -1194,7 +1237,7 @@ function addPersonFormHtml(p){
 }
 
 function calcAgeDisplay(){
-  const dob=(document.getElementById('f-dob')||{});
+  const dob={value:window._fDob!==undefined?window._fDob:((document.getElementById('f-dob')||{value:''}).value||'')};
   const b=document.getElementById('age-badge');
   const t=document.getElementById('age-text');
   if(!b||!dob.value){if(b)b.style.display='none';return;}
@@ -1225,8 +1268,8 @@ function calcAgeDisplay(){
 function savePerson(){
   const name=(document.getElementById('f-name')||{}).value?.trim();
   if(!name){toast('Name is required');return;}
-  const dob=(document.getElementById('f-dob')||{}).value||'';
-  const anniv=(document.getElementById('f-anniv')||{}).value||'';
+  const dob=window._fDob!==undefined?window._fDob:((document.getElementById('f-dob')||{}).value||'');
+  const anniv=window._fAnniv!==undefined?window._fAnniv:((document.getElementById('f-anniv')||{}).value||'');
   if(!dob&&!anniv){toast('Add at least one date');return;}
   const phone=((document.getElementById('f-phone')||{}).value||'').replace(/\D/g,'');
   const existing=editingPersonId?D.people.find(p=>p.id===editingPersonId):null;
@@ -1341,6 +1384,107 @@ function setWishTone(tone,el){
   if(ta&&wishPerson)ta.value=generateWishText(wishPerson,wishType,tone);
 }
 // regenWish removed
+
+// ── Custom Calendar Picker ──
+const MFULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MSHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DOWSHORT=['Su','Mo','Tu','We','Th','Fr','Sa'];
+const _ebCal={id:'',year:new Date().getFullYear(),month:new Date().getMonth(),viewMode:'days',sel:null,cb:null};
+
+function ebCalOpen(fieldId,currentVal,onPick){
+  // Close any open pickers first
+  document.querySelectorAll('.cal-popup').forEach(p=>p.style.display='none');
+  _ebCal.id=fieldId;_ebCal.viewMode='days';_ebCal.cb=onPick;
+  if(currentVal){
+    const d=new Date(currentVal);
+    if(!isNaN(d)){_ebCal.year=d.getFullYear();_ebCal.month=d.getMonth();_ebCal.sel=currentVal;}
+    else{_ebCal.year=new Date().getFullYear();_ebCal.month=new Date().getMonth();_ebCal.sel=null;}
+  } else {
+    _ebCal.year=new Date().getFullYear();_ebCal.month=new Date().getMonth();_ebCal.sel=null;
+  }
+  ebCalRender();
+  const popup=document.getElementById(fieldId+'-popup');
+  if(popup)popup.style.display='block';
+  // Close on outside click
+  setTimeout(()=>document.addEventListener('click',ebCalOutside,{once:true}),10);
+}
+function ebCalOutside(e){
+  const popup=document.getElementById(_ebCal.id+'-popup');
+  if(popup&&!popup.contains(e.target)){popup.style.display='none';}
+}
+function ebCalRender(){
+  const popup=document.getElementById(_ebCal.id+'-popup');if(!popup)return;
+  if(_ebCal.viewMode==='years'){ebCalRenderYears();return;}
+  const today=new Date();
+  const firstDay=new Date(_ebCal.year,_ebCal.month,1).getDay();
+  const daysInMonth=new Date(_ebCal.year,_ebCal.month+1,0).getDate();
+  const selD=_ebCal.sel?new Date(_ebCal.sel):null;
+  const dows=DOWSHORT.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  let cells='';
+  for(let i=0;i<firstDay;i++)cells+=`<div class="cal-day cal-empty"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const isToday=today.getDate()===d&&today.getMonth()===_ebCal.month&&today.getFullYear()===_ebCal.year;
+    const isSel=selD&&selD.getDate()===d&&selD.getMonth()===_ebCal.month&&selD.getFullYear()===_ebCal.year;
+    cells+=`<div class="cal-day${isToday?' cal-today':''}${isSel?' cal-sel':''}" onclick="ebCalPickDay(${d},event)">${d}</div>`;
+  }
+  popup.innerHTML=`<div class="cal-nav">
+    <button class="cal-nav-btn" onclick="ebCalShift(-1,event)">‹</button>
+    <span class="cal-yr-label" onclick="ebCalToggleYears(event)">${MFULL[_ebCal.month]} ${_ebCal.year} ▾</span>
+    <button class="cal-nav-btn" onclick="ebCalShift(1,event)">›</button>
+  </div>
+  <div class="eb-cal-grid">${dows}${cells}</div>
+  <button class="cal-clear" onclick="ebCalClear(event)">Clear date</button>`;
+}
+function ebCalRenderYears(){
+  const popup=document.getElementById(_ebCal.id+'-popup');if(!popup)return;
+  const cur=_ebCal.year;
+  let html='';
+  for(let y=cur-80;y<=cur+10;y++)html+=`<div class="cal-yr-item${y===cur?' sel':''}" onclick="ebCalPickYear(${y},event)">${y}</div>`;
+  popup.innerHTML=`<div class="cal-nav">
+    <button class="cal-nav-btn" onclick="ebCalToggleYears(event)">✕</button>
+    <span class="cal-yr-label">Select Year</span><span></span>
+  </div><div class="cal-yr-grid">${html}</div>`;
+  // Scroll selected year into view
+  setTimeout(()=>{const s=popup.querySelector('.cal-yr-item.sel');if(s)s.scrollIntoView({block:'center'});},50);
+}
+function ebCalShift(dir,e){if(e)e.stopPropagation();_ebCal.month+=dir;if(_ebCal.month<0){_ebCal.month=11;_ebCal.year--;}if(_ebCal.month>11){_ebCal.month=0;_ebCal.year++;}ebCalRender();}
+function ebCalToggleYears(e){if(e)e.stopPropagation();_ebCal.viewMode=_ebCal.viewMode==='years'?'days':'years';ebCalRender();}
+function ebCalPickYear(y,e){if(e)e.stopPropagation();_ebCal.year=y;_ebCal.viewMode='days';ebCalRender();}
+function ebCalPickDay(d,e){
+  if(e)e.stopPropagation();
+  const mm=String(_ebCal.month+1).padStart(2,'0');
+  const dd=String(d).padStart(2,'0');
+  const val=`${_ebCal.year}-${mm}-${dd}`; // YYYY-MM-DD
+  _ebCal.sel=val;
+  const disp=document.getElementById(_ebCal.id+'-disp');
+  if(disp){disp.classList.remove('empty');disp.querySelector('span').textContent=fmtShort(val);}
+  const popup=document.getElementById(_ebCal.id+'-popup');if(popup)popup.style.display='none';
+  if(_ebCal.cb)_ebCal.cb(val);
+}
+function ebCalClear(e){
+  if(e)e.stopPropagation();
+  _ebCal.sel=null;
+  const disp=document.getElementById(_ebCal.id+'-disp');
+  if(disp){disp.classList.add('empty');disp.querySelector('span').textContent='Select date';}
+  const popup=document.getElementById(_ebCal.id+'-popup');if(popup)popup.style.display='none';
+  if(_ebCal.cb)_ebCal.cb('');
+}
+// Helper to build a cal-wrap field
+function calFieldHtml(fieldId,label,currentVal,onPickFn){
+  const displayTxt=currentVal?fmtShort(currentVal):'Select date';
+  const isEmpty=!currentVal;
+  return `<div class="fg">
+    <label class="fl">${label}</label>
+    <div class="cal-wrap">
+      <div class="cal-display${isEmpty?' empty':''}" id="${fieldId}-disp" onclick="ebCalOpen('${fieldId}','${currentVal||''}',${onPickFn})">
+        <span>${displayTxt}</span>
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <div class="cal-popup" id="${fieldId}-popup" style="display:none"></div>
+    </div>
+  </div>`;
+}
+
 function copyWish(){
   const ta=document.getElementById('wish-ta');if(!ta)return;
   navigator.clipboard.writeText(ta.value).then(()=>toast('Copied!')).catch(()=>{
