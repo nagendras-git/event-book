@@ -335,8 +335,8 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 <div id="pg-people" class="pg">
   <div class="hdr"><div class="hdr-in">
     <div class="hdr-l"><div>
-      <div class="hdr-gr">Contacts</div>
-      <div class="hdr-nm">People</div>
+      <div class="hdr-gr">Your People</div>
+      <div class="hdr-nm">Contacts</div>
     </div></div>
     <div class="hdr-r">
       <div class="hdr-icon-btn" onclick="openSheet('add-person')">
@@ -350,7 +350,9 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
       <input id="search-inp" type="text" placeholder="Search by name or relation…" oninput="renderPeople()"/>
     </div>
     <div class="sort-row" id="sort-row">
-      <div class="chip active" data-sort="upcoming">Upcoming</div>
+      <div class="chip active" data-sort="all">All</div>
+      <div class="chip" data-sort="groups">Groups</div>
+      <div class="chip" data-sort="upcoming">Upcoming</div>
       <div class="chip" data-sort="name">A–Z</div>
       <div class="chip" data-sort="age">Age</div>
       <div class="chip" data-sort="fav">Favourites</div>
@@ -391,16 +393,7 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
     </div></div>
   </div></div>
   <div class="wrap" style="padding-top:20px;padding-bottom:24px;display:flex;flex-direction:column;gap:0">
-    <!-- Stats card -->
-    <div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);padding:18px 16px;margin-bottom:20px">
-      <div class="lbl" style="margin-bottom:6px">EVENT BOOK</div>
-      <div style="font-size:1.5rem;font-weight:800;letter-spacing:-.5px;margin-bottom:12px" id="st-total">0 People</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:1px solid var(--bd2)">
-        <div style="padding:10px 0;text-align:center"><div class="lbl">Today</div><div style="font-size:1rem;font-weight:800;margin-top:3px;color:var(--green)" id="st-today">0</div></div>
-        <div style="padding:10px 0;text-align:center;border-left:1px solid var(--bd2);border-right:1px solid var(--bd2)"><div class="lbl">This Week</div><div style="font-size:1rem;font-weight:800;margin-top:3px;color:var(--blue)" id="st-week">0</div></div>
-        <div style="padding:10px 0;text-align:center"><div class="lbl">Favourites</div><div style="font-size:1rem;font-weight:800;margin-top:3px;color:var(--amber)" id="st-fav">0</div></div>
-      </div>
-    </div>
+
 
     <div class="plbl" style="margin-bottom:8px">Appearance</div>
     <div class="pshdr" onclick="toggleSec('pf-appear')">
@@ -456,21 +449,30 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
     </div>
 
     <div class="plbl" style="margin-bottom:8px">Data</div>
-    <div class="pcard" style="margin-bottom:14px">
-      <div class="prow ptap" onclick="exportData()">
-        <div class="pico" style="background:var(--gbg)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-        <div class="pinfo"><div class="ptitle">Export Contacts</div><div class="psub">Download JSON backup</div></div>
-        <div class="chev"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+    <div class="pshdr" onclick="toggleSec('pf-data')">
+      <div class="pshdr-l">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        <span class="pshdr-title">Backup &amp; Data</span>
       </div>
-      <div class="prow ptap" onclick="document.getElementById('imp-file').click()">
-        <div class="pico" style="background:var(--blue-bg)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-        <div class="pinfo"><div class="ptitle">Import Contacts</div><div class="psub">Restore from JSON</div></div>
-        <div class="chev"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </div>
-      <div class="prow ptap" onclick="loadSampleData()">
-        <div class="pico" style="background:var(--pbg)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-        <div class="pinfo"><div class="ptitle">Load Sample Data</div><div class="psub">8 sample contacts to explore</div></div>
-        <div class="chev"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      <span class="scaret" id="caret-pf-data"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+    <div class="sbody" id="pf-data" style="margin-bottom:14px">
+      <div class="pcard">
+        <div class="prow ptap" onclick="exportData()">
+          <div class="pico" style="background:var(--gbg)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          <div class="pinfo"><div class="ptitle">Export Contacts</div><div class="psub">Download JSON backup</div></div>
+          <div class="chev"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+        <div class="prow ptap" onclick="document.getElementById('imp-file').click()">
+          <div class="pico" style="background:var(--blue-bg)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+          <div class="pinfo"><div class="ptitle">Import Contacts</div><div class="psub">Restore from JSON</div></div>
+          <div class="chev"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+        <div class="prow ptap" onclick="loadSampleData()">
+          <div class="pico" style="background:var(--pbg)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="pinfo"><div class="ptitle">Load Sample Data</div><div class="psub">8 sample contacts to explore</div></div>
+          <div class="chev"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
       </div>
     </div>
 
@@ -491,7 +493,7 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
   </button>
   <button class="titem" id="tab-people" onclick="switchPage('people')">
     <div class="tico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
-    <div class="tlabel">People</div>
+    <div class="tlabel">Contacts</div>
   </button>
   <button class="titem" id="tab-calendar" onclick="switchPage('calendar')">
     <div class="tico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
@@ -530,7 +532,7 @@ const DEFAULT_TEMPLATES={
 // ══ STATE ══
 let D={};
 let calDate=new Date();
-let currentSort='upcoming';
+let currentSort='all';
 let currentPage='home';
 let editingPersonId=null;
 let wishPerson=null;
@@ -587,7 +589,13 @@ function nextEventDays(p){
 
 // ══ AVATAR ══
 function avColor(name){let h=0;for(let c of(name||''))h=(h*31+c.charCodeAt(0))%AV_COLORS.length;return AV_COLORS[h];}
-function avInitials(name){return(name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
+function avInitials(name){
+  // Take first letter of first and last meaningful word (skip '&' etc)
+  const words=(name||'?').split(' ').filter(w=>w.length>1||/[a-zA-Z]/.test(w));
+  if(words.length===0)return'?';
+  if(words.length===1)return words[0][0].toUpperCase();
+  return(words[0][0]+words[words.length-1][0]).toUpperCase();
+}
 function avHtml(p,size=36,r=10){
   const s=`width:${size}px;height:${size}px;border-radius:${r}px;flex-shrink:0;`;
   if(p.photo)return`<img src="${p.photo}" style="${s}object-fit:cover;display:block"/>`;
@@ -635,16 +643,34 @@ function renderHome(){
   todayEvs.forEach(({p,type})=>bannerCards.push({p,type,days:0}));
   upcoming.slice(0,4).forEach(ev=>bannerCards.push(ev));
 
-  // Stats mini card (always shown)
-  html+=`<div class="hero-card">
-    <div class="hero-top">
-      <div class="lbl">Event Book</div>
-      <div style="font-size:2rem;font-weight:800;letter-spacing:-1px;line-height:1;margin-top:4px">${D.people.length}<span style="font-size:1rem;font-weight:600;color:var(--t3);margin-left:6px">People</span></div>
+  // Vivid home hero card
+  const favCount=D.people.filter(p=>p.fav).length;
+  // Hero card — muted dark glass, doesn't compete with vivid banner below
+  html+=`<div style="border-radius:var(--rx);overflow:hidden;margin-bottom:10px;position:relative;background:var(--sf);border:1px solid var(--bd)">
+    <div style="padding:16px 18px 0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div style="font-size:.6rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t3);margin-bottom:5px">Event Book</div>
+          <div style="font-size:2.2rem;font-weight:800;letter-spacing:-1.5px;line-height:1;color:var(--t1)">${D.people.length}<span style="font-size:.9rem;font-weight:500;color:var(--t3);margin-left:8px">${D.people.length===1?'person':'people'}</span></div>
+        </div>
+        ${todayEvs.length>0
+          ?`<div style="display:inline-flex;align-items:center;gap:5px;background:var(--gbg);border:1px solid var(--gbd);border-radius:99px;padding:5px 12px;font-size:.72rem;font-weight:700;color:var(--green)"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>${todayEvs.length} Today</div>`
+          :`<div style="display:inline-flex;align-items:center;gap:5px;background:var(--blue-bg);border:1px solid var(--blue-bd);border-radius:99px;padding:5px 12px;font-size:.72rem;font-weight:700;color:var(--blue)">${upcoming.length} Upcoming</div>`}
+      </div>
     </div>
-    <div class="hero-grid">
-      <div class="hero-cell"><div class="lbl">Today</div><div class="hero-cell-val" style="color:var(--green)">${todayEvs.length}</div></div>
-      <div class="hero-cell"><div class="lbl">This Week</div><div class="hero-cell-val" style="color:var(--blue)">${upcoming.length}</div></div>
-      <div class="hero-cell"><div class="lbl">Favourites</div><div class="hero-cell-val" style="color:var(--amber)">${D.people.filter(p=>p.fav).length}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--bd2)">
+      <div style="padding:11px 14px;text-align:center">
+        <div class="lbl">Today</div>
+        <div style="font-size:1.1rem;font-weight:800;margin-top:3px;color:${todayEvs.length>0?'var(--green)':'var(--t3)'}">${todayEvs.length}</div>
+      </div>
+      <div style="padding:11px 14px;text-align:center;border-left:1px solid var(--bd2);border-right:1px solid var(--bd2)">
+        <div class="lbl">This Week</div>
+        <div style="font-size:1.1rem;font-weight:800;margin-top:3px;color:${upcoming.length>0?'var(--blue)':'var(--t3)'}">${upcoming.length}</div>
+      </div>
+      <div style="padding:11px 14px;text-align:center">
+        <div class="lbl">Favourites</div>
+        <div style="font-size:1.1rem;font-weight:800;margin-top:3px;color:${favCount>0?'var(--amber)':'var(--t3)'}">${favCount}</div>
+      </div>
     </div>
   </div>`;
 
@@ -655,17 +681,8 @@ function renderHome(){
       const p=ev.p,isBd=ev.type==='birthday',days=ev.days;
       const age=isBd?getAgeNextBday(p.dob):null;
       const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
-      const gradients=isBd?[
-        'linear-gradient(135deg,#1d4ed8,#7c3aed)',
-        'linear-gradient(135deg,#065f46,#0891b2)',
-        'linear-gradient(135deg,#7c2d12,#b45309)',
-        'linear-gradient(135deg,#4c1d95,#be185d)'
-      ]:[
-        'linear-gradient(135deg,#92400e,#b45309)',
-        'linear-gradient(135deg,#831843,#9d174d)',
-        'linear-gradient(135deg,#1e3a5f,#1d4ed8)'
-      ];
-      const grad=gradients[i%gradients.length];
+      // Same gradient for all cards — consistent look
+      const grad='linear-gradient(135deg,#1d4ed8,#7c3aed)';
       const eyebrow=days===0?(isBd?'🎂 Birthday Today!':'💍 Anniversary Today!'):(isBd?`🎂 Birthday in ${days} day${days>1?'s':''}`:`💍 Anniversary in ${days} day${days>1?'s':''}`);
       const subLine=isBd?(age?`Turning ${age} years old`:'Celebrating today'):(yrs?`${yrs} beautiful years together`:'Celebrating together');
       const avBg=avColor(p.name);
@@ -702,7 +719,7 @@ function renderHome(){
     }
     html+=`</div>`;
     // Store card count for nav
-    html+=`<script>window._celTotal=${bannerCards.length};window._celIdx=0;<\/script>`;
+    // _celTotal is set after innerHTML via setCelState()
   } else {
     html+=`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);padding:20px 16px;text-align:center;color:var(--t3);margin-bottom:4px">
       <div style="font-size:1.4rem;margin-bottom:6px;opacity:.4">🎉</div>
@@ -763,57 +780,142 @@ function renderHome(){
   </div>`;
 
   c.innerHTML=html;
+  // Set carousel state AFTER DOM is set — cannot use <script> inside innerHTML
+  setCelState(bannerCards.length);
 }
 
 // ══ PEOPLE PAGE ══
+// all      → flat list ALL contacts, sorted by next event
+// groups   → grouped by category (collapsible), all contacts
+// upcoming → flat list ONLY people with event in next 30 days
+// name     → flat A–Z or Z–A (toggleable)
+// age      → flat youngest/oldest first (toggleable)
+// fav      → flat ONLY starred contacts
 function renderPeople(){
   const q=(document.getElementById('search-inp')||{value:''}).value.toLowerCase();
-  let people=[...D.people].filter(p=>!q||p.name.toLowerCase().includes(q)||(p.relation||'').toLowerCase().includes(q)||(p.category||'').toLowerCase().includes(q));
 
-  if(currentSort==='name')people.sort((a,b)=>a.name.localeCompare(b.name));
-  else if(currentSort==='age')people.sort((a,b)=>(getAge(a.dob)||999)-(getAge(b.dob)||999));
-  else if(currentSort==='fav')people.sort((a,b)=>(b.fav?1:0)-(a.fav?1:0));
-  else people.sort((a,b)=>nextEventDays(a)-nextEventDays(b));
+  // Base: search filter (always applied)
+  let base=[...D.people].filter(p=>!q||
+    p.name.toLowerCase().includes(q)||
+    (p.relation||'').toLowerCase().includes(q)||
+    (p.category||'').toLowerCase().includes(q)
+  );
+
+  // Mode filter
+  let people;
+  if(currentSort==='upcoming'){
+    // Only people with a birthday or anniversary in the next 30 days
+    people=base.filter(p=>{
+      const bd=p.dob?daysUntil(p.dob):null;
+      const an=p.anniv?daysUntil(p.anniv):null;
+      return [bd,an].some(d=>d!==null&&d<=30);
+    }).sort((a,b)=>nextEventDays(a)-nextEventDays(b));
+  } else if(currentSort==='fav'){
+    // Only starred contacts
+    people=base.filter(p=>p.fav).sort((a,b)=>nextEventDays(a)-nextEventDays(b));
+  } else if(currentSort==='name'){
+    people=[...base].sort((a,b)=>sortDir.name*a.name.localeCompare(b.name));
+  } else if(currentSort==='age'){
+    people=[...base].sort((a,b)=>sortDir.age*((getAge(a.dob)||999)-(getAge(b.dob)||999)));
+  } else {
+    // all / groups — sort by next event
+    people=[...base].sort((a,b)=>nextEventDays(a)-nextEventDays(b));
+  }
 
   const wrap=document.getElementById('people-list');
   if(!wrap)return;
 
+  // Empty state
   if(people.length===0){
-    wrap.innerHTML=`<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">${q?'No results found':'No people added yet.<br>Tap + to add your first person.'}</div></div>`;
+    const emptyMsg={
+      upcoming:'No events in the next 30 days',
+      fav:'No favourite contacts yet.<br>Edit a contact and tap ⭐ to mark.',
+    }[currentSort]||(q?'No results found':'No contacts added yet.<br>Tap + to add your first person.');
+    wrap.innerHTML=`<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">${emptyMsg}</div></div>`;
     return;
   }
 
-  // Group by category
-  let html='';
-  CATS.forEach(cat=>{
-    const members=people.filter(p=>p.category===cat);
-    if(members.length===0)return;
-    const allCat=D.people.filter(p=>p.category===cat).length;
-    const col=CAT_COLORS[cat]||'#64748b';
-    html+=`<div class="shdr" onclick="toggleSec('cat-${cat}')">
-      <div class="shdr-l">
-        <div class="sec-ico" style="background:${col}22;border:1px solid ${col}44"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${col}" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
-        <span class="stitle">${cat}</span>
+  // ── GROUPED VIEW ──
+  if(currentSort==='groups' && !q){
+    let html='';
+    CATS.forEach(cat=>{
+      const members=people.filter(p=>p.category===cat);
+      if(members.length===0)return;
+      const col=CAT_COLORS[cat]||'#64748b';
+      html+=`<div class="shdr" onclick="toggleSec('cat-${cat}')">
+        <div class="shdr-l">
+          <div class="sec-ico" style="background:${col}22;border:1px solid ${col}44">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${col}" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <span class="stitle">${cat}</span>
+        </div>
+        <div class="shdr-r">
+          <span class="sec-cnt" style="background:${col}22;color:${col};border:1px solid ${col}44">${members.length}</span>
+          <span class="scaret" id="caret-cat-${cat}"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </div>
       </div>
-      <div class="shdr-r">
-        <span class="sec-cnt" style="background:${col}22;color:${col};border:1px solid ${col}44">${allCat}</span>
-        <span class="scaret" id="caret-cat-${cat}"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
-      </div>
-    </div>
-    <div class="sbody open" id="cat-${cat}" style="margin-bottom:8px">
-      <div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);overflow:hidden;margin-bottom:5px">
-        ${members.map(p=>personRowHtml(p)).join('')}
-      </div>
-    </div>`;
-  });
+      <div class="sbody" id="cat-${cat}" style="margin-bottom:8px">
+        <div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);overflow:hidden;margin-bottom:5px">
+          ${members.map(p=>personRowHtml(p)).join('')}
+        </div>
+      </div>`;
+    });
+    wrap.innerHTML=html;
+    CATS.forEach(cat=>{
+      const b=document.getElementById('cat-'+cat);
+      const cr=document.getElementById('caret-cat-'+cat);
+      if(b&&cr)cr.classList.toggle('open',b.classList.contains('open'));
+    });
+    return;
+  }
 
+  // ── FLAT VIEW ──
+  const sortLabels={
+    all:      'All Contacts',
+    upcoming: 'Upcoming Events',
+    fav:      'Favourites',
+    name:     sortDir.name===1?'A – Z':'Z – A',
+    age:      sortDir.age===1?'Youngest First':'Oldest First',
+    groups:   'All Contacts',
+  };
+  const headerLabel=q?`${people.length} result${people.length!==1?'s':''}`:sortLabels[currentSort]||'';
+  let html=`<div class="lbl" style="padding:0 2px;margin-bottom:8px">${headerLabel} · ${people.length} ${people.length===1?'person':'people'}</div>`;
+  html+=`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);overflow:hidden">`;
+  html+=people.map(p=>flatPersonRowHtml(p)).join('');
+  html+=`</div>`;
   wrap.innerHTML=html;
-  // Re-sync carets
-  CATS.forEach(cat=>{
-    const b=document.getElementById('cat-'+cat);
-    const cr=document.getElementById('caret-cat-'+cat);
-    if(b&&cr){const isOpen=b.classList.contains('open');if(isOpen)cr.classList.add('open');else cr.classList.remove('open');}
-  });
+}
+
+function flatPersonRowHtml(p){
+  const col=CAT_COLORS[p.category]||'#64748b';
+  const age=getAge(p.dob);
+  const bdDays=p.dob?daysUntil(p.dob):null;
+  const anDays=p.anniv?daysUntil(p.anniv):null;
+  const nextDays=Math.min(...[bdDays,anDays].filter(d=>d!==null).concat([9999]));
+  const nextLabel=nextDays===0
+    ?`<span style="font-size:.6rem;font-weight:700;background:var(--gbg);color:var(--green);border:1px solid var(--gbd);padding:1px 6px;border-radius:99px">Today!</span>`
+    :nextDays<=7
+    ?`<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${nextDays}d</span>`:'';
+  const details=[];
+  if(p.dob)details.push(`🎂 ${fmtShort(p.dob)}${age!==null?' ('+age+'y)':''}`);
+  if(p.anniv)details.push(`💍 ${fmtShort(p.anniv)}`);
+  if(p.relation)details.push(p.relation);
+  return`<div class="ritem">
+    ${avHtml(p,36,10)}
+    <div class="rbody">
+      <div class="rtitle" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+        <span>${p.name}${p.fav?' ⭐':''}</span>
+        <span style="font-size:.58rem;font-weight:700;padding:1px 6px;border-radius:99px;background:${col}20;color:${col};border:1px solid ${col}40;flex-shrink:0">${p.category}</span>
+      </div>
+      <div class="rsub">${details.join(' · ')||'No dates added'}</div>
+    </div>
+    <div class="rright">
+      ${nextLabel}
+      ${p.phone?`<div class="rib wa" onclick="openWishSheetAuto('${p.id}')"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>`:''}
+      <div class="rib" onclick="openSheet('add-person','${p.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+      <div class="rib del" onclick="deletePerson('${p.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg></div>
+    </div>
+  </div>`;
 }
 
 function personRowHtml(p){
@@ -901,10 +1003,6 @@ function showDayEvs(d){
 
 // ══ SETTINGS STATS ══
 function renderSettings(){
-  document.getElementById('st-total').innerHTML=`${D.people.length}<span style="font-size:1rem;font-weight:600;color:var(--t3);margin-left:6px">People</span>`;
-  document.getElementById('st-today').textContent=getTodayEvents().length;
-  document.getElementById('st-week').textContent=getUpcoming7().length;
-  document.getElementById('st-fav').textContent=D.people.filter(p=>p.fav).length;
   const savedFs=parseInt(localStorage.getItem('eb_fs'))||16;
   document.querySelectorAll('.fsbtn').forEach(b=>{b.classList.toggle('on',parseInt(b.dataset.sz)===savedFs);});
 }
@@ -922,14 +1020,17 @@ function switchPage(page){
   else if(page==='calendar')renderCalendar();
   else if(page==='settings')renderSettings();
 }
+let _celTotal=0,_celIdx=0;
+let sortDir={name:1,age:1}; // 1=asc, -1=desc
+function setCelState(total){_celTotal=total;_celIdx=0;}
 function celNav(dir){
-  const total=window._celTotal||0;if(total<=1)return;
-  window._celIdx=((window._celIdx||0)+dir+total)%total;
-  for(let i=0;i<total;i++){
+  if(_celTotal<=1)return;
+  _celIdx=(_celIdx+dir+_celTotal)%_celTotal;
+  for(let i=0;i<_celTotal;i++){
     const c=document.getElementById('cel-'+i);
     const d=document.getElementById('cdot-'+i);
-    if(c)c.style.display=i===window._celIdx?'block':'none';
-    if(d)d.classList.toggle('on',i===window._celIdx);
+    if(c)c.style.display=i===_celIdx?'block':'none';
+    if(d)d.classList.toggle('on',i===_celIdx);
   }
 }
 function renderAll(){
@@ -1155,12 +1256,14 @@ function wishSheetHtml(){
   <div class="tone-grid" id="tone-chips">
     ${['emotional','funny','spiritual','professional','simple'].map(t=>`<div class="tone-chip${t===wishTone?' active':''}" onclick="setWishTone('${t}',this)">${{emotional:'💖 Emotional',funny:'😄 Funny',spiritual:'🙏 Spiritual',professional:'💼 Professional',simple:'✉️ Simple'}[t]}</div>`).join('')}
   </div>
-  <div class="lbl" style="margin-bottom:8px">MESSAGE</div>
-  <textarea class="wish-ta" id="wish-ta">${generateWishText(p,wishType,wishTone)}</textarea>
-  <div class="wish-actions">
-    <button class="wish-action-btn" onclick="regenWish()">↺ Regenerate</button>
-    <button class="wish-action-btn" onclick="copyWish()">⎘ Copy</button>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+    <div class="lbl">MESSAGE</div>
+    <button onclick="copyWish()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s" onmouseenter="this.style.background='var(--sf3)'" onmouseleave="this.style.background='var(--sf2)'">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Copy
+    </button>
   </div>
+  <textarea class="wish-ta" id="wish-ta">${generateWishText(p,wishType,wishTone)}</textarea>
   <button class="wa-send-btn" onclick="sendWish()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
     Send on WhatsApp
@@ -1180,12 +1283,7 @@ function setWishTone(tone,el){
   const ta=document.getElementById('wish-ta');
   if(ta&&wishPerson)ta.value=generateWishText(wishPerson,wishType,tone);
 }
-function regenWish(){
-  if(!wishPerson)return;
-  const ta=document.getElementById('wish-ta');
-  if(ta)ta.value=generateWishText(wishPerson,wishType,wishTone);
-  toast('Message refreshed');
-}
+// regenWish removed
 function copyWish(){
   const ta=document.getElementById('wish-ta');if(!ta)return;
   navigator.clipboard.writeText(ta.value).then(()=>toast('Copied!')).catch(()=>{
@@ -1220,9 +1318,22 @@ function saveTmpls(){
 // ══ SORT CHIPS ══
 document.addEventListener('click',e=>{
   if(e.target.classList.contains('chip')&&e.target.closest('#sort-row')){
-    document.querySelectorAll('#sort-row .chip').forEach(c=>c.classList.remove('active'));
+    const newSort=e.target.dataset.sort||'all';
+    // Toggle direction if same chip tapped again (name/age only)
+    if(newSort===currentSort&&(newSort==='name'||newSort==='age')){
+      sortDir[newSort]*=-1;
+    }
+    // Reset all chip labels first
+    document.querySelectorAll('#sort-row .chip').forEach(c=>{
+      c.classList.remove('active');
+      if(c.dataset.sort==='name')c.textContent='A–Z';
+      if(c.dataset.sort==='age')c.textContent='Age';
+    });
+    currentSort=newSort;
+    // Show direction arrow on active sortable chips
+    if(newSort==='name')e.target.textContent=sortDir.name===1?'A–Z ↑':'Z–A ↓';
+    if(newSort==='age') e.target.textContent=sortDir.age===1?'Age ↑':'Age ↓';
     e.target.classList.add('active');
-    currentSort=e.target.dataset.sort||'upcoming';
     renderPeople();
   }
 });
