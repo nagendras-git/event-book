@@ -12,22 +12,43 @@
 <script>
 (function(){
   const ic='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExNSIgZmlsbD0iIzBkMGQxMCIvPjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTE1IiBmaWxsPSJ1cmwoI2cpIi8+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFkNGVkOCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzdjM2FlZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjx0ZXh0IHg9IjI1NiIgeT0iMzEwIiBmb250LXNpemU9IjIyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IndoaXRlIj7wn46CPC90ZXh0Pjwvc3ZnPg==';
-  const mf=JSON.stringify({
-    name:"Event Book",short_name:"Event Book",
-    description:"Remember and send birthday & anniversary wishes",
-    start_url:"./",scope:"./",
-    display:"standalone",
-    background_color:"#0d0d10",theme_color:"#0d0d10",
-    orientation:"portrait",
-    categories:["lifestyle","utilities"],
-    icons:[
+  function buildManifestWithIcon(pngDataUrl){
+    const icons=pngDataUrl?[
+      {src:pngDataUrl,sizes:"192x192",type:"image/png",purpose:"any"},
+      {src:pngDataUrl,sizes:"512x512",type:"image/png",purpose:"maskable"}
+    ]:[
       {src:ic,sizes:"192x192",type:"image/svg+xml",purpose:"any"},
-      {src:ic,sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}
-    ]
-  });
-  const mb=new Blob([mf],{type:'application/json'});
-  const ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(mb);document.head.appendChild(ml);
-  // Apple touch icon
+      {src:ic,sizes:"512x512",type:"image/svg+xml",purpose:"maskable"}
+    ];
+    const mf=JSON.stringify({
+      name:"Event Book",short_name:"Event Book",
+      description:"Remember and send birthday & anniversary wishes",
+      start_url:"./",scope:"./",
+      display:"standalone",
+      background_color:"#0d0d10",theme_color:"#0d0d10",
+      orientation:"portrait",
+      categories:["lifestyle","utilities"],
+      icons
+    });
+    const mb=new Blob([mf],{type:'application/json'});
+    const ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(mb);
+    const existing=document.querySelector('link[rel="manifest"]');
+    if(existing)existing.remove();
+    document.head.appendChild(ml);
+  }
+  try{
+    const img=new Image();
+    img.onload=function(){
+      try{
+        const cv=document.createElement('canvas');cv.width=512;cv.height=512;
+        const ctx=cv.getContext('2d');
+        ctx.drawImage(img,0,0,512,512);
+        buildManifestWithIcon(cv.toDataURL('image/png'));
+      }catch(e){buildManifestWithIcon(null);}
+    };
+    img.onerror=function(){buildManifestWithIcon(null);};
+    img.src=ic;
+  }catch(e){buildManifestWithIcon(null);}
   const al=document.createElement('link');al.rel='apple-touch-icon';al.href=ic;document.head.appendChild(al);
   // Service worker with cache-first strategy for offline support
   if('serviceWorker' in navigator){
@@ -95,12 +116,16 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
   padding-bottom:13px;padding-left:16px;padding-right:16px;
   display:flex;align-items:center;justify-content:center;
 }
+@media (display-mode: standalone) {
+  .hdr{border-top:none!important}
+  body{border-top:none!important}
+}
 .hdr-in{width:100%;max-width:480px;display:flex;align-items:center;justify-content:space-between;}
 .hdr-l{display:flex;align-items:center;gap:10px}
 .avi{width:2.2rem;height:2.2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;cursor:pointer;border:none;color:#fff;transition:transform 180ms var(--spring);flex-shrink:0;}
 .avi:active{transform:scale(.9)}
 .hdr-gr{font-size:.72rem;color:var(--t3);font-weight:400;line-height:1}
-.hdr-nm{font-size:1.18rem;font-weight:800;color:var(--t1);letter-spacing:-.4px;line-height:1.2}
+.hdr-nm{font-size:1.18rem;font-weight:800;color:var(--t1);letter-spacing:-.4px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100vw - 130px)}
 .hdr-r{display:flex;align-items:center;gap:8px}
 .hdr-icon-btn{width:32px;height:32px;border-radius:50%;background:var(--sf2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 120ms;}
 .hdr-icon-btn:active{transform:scale(.9);background:var(--sf3)}
@@ -301,7 +326,7 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .search-bar input::placeholder{color:var(--t3)}
 
 /* SORT CHIPS */
-.sort-row{display:flex;gap:7px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;}
+.sort-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;}
 .sort-row::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;padding:5px 12px;border-radius:99px;font-size:.72rem;font-weight:700;border:1px solid var(--bd);background:var(--sf2);color:var(--t3);cursor:pointer;transition:all .12s;}
 .chip.active{background:var(--blue-bg);border-color:var(--blue-bd);color:var(--blue)}
@@ -945,8 +970,78 @@ function renderPeople(){
   wrap.innerHTML=html;
 }
 
+function buildExpandedPanel(p){
+  const col=CAT_COLORS[p.category]||'#64748b';
+  const age=getAge(p.dob);
+  const ageNext=getAgeNextBday(p.dob);
+  const yrsNext=getYearsNextAnniv(p.anniv);
+  const bdDays=p.dob?daysUntil(p.dob):null;
+  const anDays=p.anniv?daysUntil(p.anniv):null;
+
+  // Date info rows
+  let dateRows='';
+  if(p.dob){
+    const dLabel=bdDays===0?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--gbg);color:var(--green);border:1px solid var(--gbd)">🎉 Today!</span>`:bdDays<=7?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25)">in ${bdDays}d</span>`:'';
+    dateRows+=`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--bd2)">
+      <div style="width:28px;height:28px;border-radius:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem">🎂</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.78rem;font-weight:700;color:var(--t1)">${fmtFull(p.dob)}</div>
+        <div style="font-size:.65rem;color:var(--t3);margin-top:1px">Birthday · Turns ${ageNext}</div>
+      </div>
+      ${dLabel}
+    </div>`;
+  }
+  if(p.anniv){
+    const aLabel=anDays===0?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--gbg);color:var(--green);border:1px solid var(--gbd)">🎉 Today!</span>`:anDays<=7?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25)">in ${anDays}d</span>`:'';
+    dateRows+=`<div style="display:flex;align-items:center;gap:9px;padding:7px 0">
+      <div style="width:28px;height:28px;border-radius:8px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem">💍</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.78rem;font-weight:700;color:var(--t1)">${fmtFull(p.anniv)}</div>
+        <div style="font-size:.65rem;color:var(--t3);margin-top:1px">Anniversary · ${yrsNext} yr${yrsNext!==1?'s':''} together</div>
+      </div>
+      ${aLabel}
+    </div>`;
+  }
+  if(!p.dob&&!p.anniv){
+    dateRows=`<div style="font-size:.75rem;color:var(--t3);padding:8px 0;text-align:center">No dates added yet</div>`;
+  }
+
+  // Phone / call row
+  const phoneRow=p.phone?`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px solid var(--bd2)">
+    <div style="width:28px;height:28px;border-radius:8px;background:var(--blue-bg);border:1px solid var(--blue-bd);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+    </div>
+    <div style="font-size:.78rem;font-weight:600;color:var(--t1);flex:1">${p.phone}</div>
+    <a href="tel:${p.phone}" style="display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:7px;background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);font-size:.7rem;font-weight:700;text-decoration:none">Call</a>
+  </div>`:'';
+
+  // Primary Wish CTA — big green button
+  const wishBtn=p.phone?`<button onclick="openWishSheetAuto('${p.id}')" style="width:100%;padding:11px;border-radius:10px;border:none;cursor:pointer;background:#25d366;color:#fff;font-family:'Inter',sans-serif;font-size:.86rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 12px rgba(37,211,102,.35);transition:all .12s;margin-bottom:8px">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+    Send Wish on WhatsApp
+  </button>`:'';
+
+  // Secondary row: Edit + Delete
+  const secRow=`<div style="display:flex;gap:8px">
+    <button onclick="openSheet('add-person','${p.id}')" style="flex:1;padding:9px;border-radius:9px;border:1px solid var(--bd);background:var(--sf3);color:var(--t2);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .12s">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Edit
+    </button>
+    <button onclick="deletePerson('${p.id}')" style="flex:1;padding:9px;border-radius:9px;border:1px solid rgba(248,113,113,.25);background:var(--rbg);color:var(--red);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .12s">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      Delete
+    </button>
+  </div>`;
+
+  return`<div style="border-top:1px solid var(--bd2);background:var(--sf2);padding:12px 14px 12px">
+    <div style="background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:10px">
+      ${dateRows}${phoneRow}
+    </div>
+    ${wishBtn}${secRow}
+  </div>`;
+}
+
 function flatPersonRowHtml(p){
-  // Same caret-expand design as personRowHtml but with category pill
   const col=CAT_COLORS[p.category]||'#64748b';
   const age=getAge(p.dob);
   const bdDays=p.dob?daysUntil(p.dob):null;
@@ -973,10 +1068,8 @@ function flatPersonRowHtml(p){
       </div>
       <svg id="pc-${p.id}" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;transition:transform .25s var(--ease)"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
-    <div id="pa-${p.id}" style="display:none;border-top:1px solid var(--bd2);padding:10px 14px;gap:8px;flex-wrap:wrap;background:var(--sf2);">
-      ${p.phone?`<button style="display:flex;align-items:center;justify-content:center;gap:6px;flex:1;min-width:80px;padding:9px 10px;border-radius:var(--r);border:1.5px solid var(--gbd);background:var(--gbg);color:var(--green);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer" onclick="openWishSheetAuto('${p.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>Wish</button>`:''}
-      <button style="display:flex;align-items:center;justify-content:center;gap:5px;flex:1;min-width:55px;padding:9px 10px;border-radius:var(--r);border:1.5px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer" onclick="openSheet('add-person','${p.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
-      <button style="display:flex;align-items:center;justify-content:center;gap:5px;flex:1;min-width:55px;padding:9px 10px;border-radius:var(--r);border:1.5px solid rgba(248,113,113,.3);background:var(--rbg);color:var(--red);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer" onclick="deletePerson('${p.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>Delete</button>
+    <div id="pa-${p.id}" style="display:none">
+      ${buildExpandedPanel(p)}
     </div>
   </div>`;
 }
@@ -986,7 +1079,6 @@ function personRowHtml(p){
   const bdDays=p.dob?daysUntil(p.dob):null;
   const anDays=p.anniv?daysUntil(p.anniv):null;
   const nextDays=Math.min(...[bdDays,anDays].filter(d=>d!==null).concat([9999]));
-  // Age badge inline blue
   const ageBadge=age!==null?`<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${age}y</span>`:'';
   const nextLabel=nextDays===0?`<span style="font-size:.6rem;font-weight:700;background:var(--gbg);color:var(--green);border:1px solid var(--gbd);padding:1px 6px;border-radius:99px">Today!</span>`:nextDays<=7?`<span style="font-size:.6rem;font-weight:700;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25);padding:1px 6px;border-radius:99px">${nextDays}d</span>`:'';
   const bdLine=p.dob?`🎂 ${fmtShort(p.dob)}`:'';
@@ -1006,10 +1098,8 @@ function personRowHtml(p){
       </div>
       <svg id="pc-${p.id}" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;transition:transform .25s var(--ease)"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
-    <div id="pa-${p.id}" style="display:none;border-top:1px solid var(--bd2);padding:10px 14px;gap:8px;flex-wrap:wrap;background:var(--sf2);">
-      ${p.phone?`<button style="display:flex;align-items:center;justify-content:center;gap:6px;flex:1;min-width:80px;padding:9px 10px;border-radius:var(--r);border:1.5px solid var(--gbd);background:var(--gbg);color:var(--green);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer" onclick="openWishSheetAuto('${p.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>Wish</button>`:''}
-      <button style="display:flex;align-items:center;justify-content:center;gap:5px;flex:1;min-width:55px;padding:9px 10px;border-radius:var(--r);border:1.5px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer" onclick="openSheet('add-person','${p.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
-      <button style="display:flex;align-items:center;justify-content:center;gap:5px;flex:1;min-width:55px;padding:9px 10px;border-radius:var(--r);border:1.5px solid rgba(248,113,113,.3);background:var(--rbg);color:var(--red);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer" onclick="deletePerson('${p.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>Delete</button>
+    <div id="pa-${p.id}" style="display:none">
+      ${buildExpandedPanel(p)}
     </div>
   </div>`;
 }
@@ -1018,17 +1108,17 @@ function togglePersonActions(id){
   const pid=id.replace('pa-','');
   const caret=document.getElementById('pc-'+pid);
   if(!panel)return;
-  const open=panel.style.display==='flex';
+  const open=panel.style.display==='block';
   // Close any other open panels first
   document.querySelectorAll('[id^="pa-"]').forEach(p=>{
-    if(p.id!==id&&p.style.display==='flex'){
+    if(p.id!==id&&p.style.display==='block'){
       p.style.display='none';
       const otherId=p.id.replace('pa-','');
       const otherCaret=document.getElementById('pc-'+otherId);
       if(otherCaret)otherCaret.style.transform='';
     }
   });
-  panel.style.display=open?'none':'flex';
+  panel.style.display=open?'none':'block';
   if(caret)caret.style.transform=open?'':'rotate(90deg)';
 }
 
