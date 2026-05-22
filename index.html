@@ -827,7 +827,7 @@ function renderHome(){
       const age=isBd?getAgeNextBday(p.dob):null;
       const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
       // Same gradient for all cards — consistent look
-      const grad=isBd?'linear-gradient(145deg,#1e3a8a 0%,#4f46e5 45%,#7c3aed 100%)':'linear-gradient(145deg,#312e81 0%,#5b21b6 50%,#7e22ce 100%)';
+      const grad=isBd?'linear-gradient(145deg,#1e40af 0%,#2563eb 40%,#4f46e5 100%)':'linear-gradient(145deg,#064e3b 0%,#0d9488 50%,#0891b2 100%)';
       const eyebrow=days===0?(isBd?'🎂 Birthday Today!':'💍 Anniversary Today!'):(isBd?`🎂 Birthday in ${days} day${days>1?'s':''}`:`💍 Anniversary in ${days} day${days>1?'s':''}`);
       const subLine=isBd?(age?`Turning ${age} years old`:'Celebrating today'):(yrs?`${yrs} beautiful years together`:'Celebrating together');
       const avBg=avColor(p.name);
@@ -840,8 +840,8 @@ function renderHome(){
           <div class="cel-sub">${subLine}</div>
           <div class="cel-row" style="flex-wrap:nowrap;gap:7px">
             <div class="cel-badge" style="flex-shrink:0">⏰ ${days===0?'Today':'In '+days+'d'}</div>
-              ${p.phone?`<a href="tel:${p.phone}" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);text-decoration:none;flex-shrink:0;color:#fff;font-family:'Inter',sans-serif;font-size:.76rem;font-weight:700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg>Call</a>`:''}
-              ${p.phone?`<button onclick="openWishSheet('${p.id}','${ev.type}')" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;font-family:'Inter',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-1.771-.885-2.928-1.579-4.088-3.583-.309-.533.309-.496.885-1.651.099-.197.049-.371-.025-.52-.074-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.148.198 2.095 3.2 5.077 4.487.709.306 1.261.489 1.692.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.558 4.117 1.534 5.845L.057 23.488a.75.75 0 00.921.921l5.643-1.477A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.695-.512-5.234-1.403l-.374-.224-3.882 1.016 1.016-3.881-.224-.374A10 10 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" fill="rgba(255,255,255,.7)"/></svg>Send Wishes</button>`:''}
+              ${p.phone?`<a href="tel:${p.phone}" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);text-decoration:none;flex-shrink:0;color:#fff;font-family:'Inter',sans-serif;font-size:.76rem;font-weight:700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3730a3" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg>Call</a>`:''}
+              ${p.phone?`<button onclick="openWishSheet('${p.id}','${ev.type}')" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;font-family:'Inter',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="#16a34a"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-1.771-.885-2.928-1.579-4.088-3.583-.309-.533.309-.496.885-1.651.099-.197.049-.371-.025-.52-.074-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.148.198 2.095 3.2 5.077 4.487.709.306 1.261.489 1.692.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.558 4.117 1.534 5.845L.057 23.488a.75.75 0 00.921.921l5.643-1.477A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.695-.512-5.234-1.403l-.374-.224-3.882 1.016 1.016-3.881-.224-.374A10 10 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" fill="rgba(255,255,255,.7)"/></svg>Send Wishes</button>`:''}
           </div>
         </div>
         <div class="cel-ava" style="background:${avBg}">${avContent}</div>
@@ -849,15 +849,11 @@ function renderHome(){
     });
     if(bannerCards.length>1){
       html+=`<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:2px;margin-bottom:2px">
-        <button class="cel-nav-prev" onclick="celNav(-1)" style="position:static;transform:none;width:26px;height:26px;border-radius:50%;background:var(--sf3);border:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;justify-content:center">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
+        <button class="cel-nav-prev" onclick="celNav(-1)" style="position:static;transform:none;width:30px;height:30px;border-radius:50%;background:var(--sf);border:1.5px solid var(--bd);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.15);transition:all .12s"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t1)" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
         <div class="cel-dots" id="cel-dots" style="display:flex;gap:4px;align-items:center">
           ${bannerCards.map((_,i)=>`<div class="cel-dot${i===0?' on':''}" id="cdot-${i}"></div>`).join('')}
         </div>
-        <button class="cel-nav-next" onclick="celNav(1)" style="position:static;transform:none;width:26px;height:26px;border-radius:50%;background:var(--sf3);border:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;justify-content:center">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
+        <button class="cel-nav-next" onclick="celNav(1)" style="position:static;transform:none;width:30px;height:30px;border-radius:50%;background:var(--sf);border:1.5px solid var(--bd);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.15);transition:all .12s"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t1)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg></button>
       </div>`;
     }
     html+=`</div>`;
@@ -1206,7 +1202,20 @@ function switchPage(page){
 }
 let _celTotal=0,_celIdx=0;
 let sortDir={name:1,age:1}; // 1=asc, -1=desc
-function setCelState(total){_celTotal=total;_celIdx=0;}
+function setCelState(total){
+  _celTotal=total;_celIdx=0;
+  // Add swipe support
+  const wrap=document.getElementById('cel-wrap');
+  if(!wrap||wrap._swipeSet)return;
+  wrap._swipeSet=true;
+  let sx=0,sy=0;
+  wrap.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  wrap.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx;
+    const dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.5) celNav(dx<0?1:-1);
+  },{passive:true});
+}
 function celNav(dir){
   if(_celTotal<=1)return;
   _celIdx=(_celIdx+dir+_celTotal)%_celTotal;
