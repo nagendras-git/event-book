@@ -406,6 +406,7 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 <div class="toast" id="toast"></div>
 <input type="file" id="imp-file" accept=".json" style="display:none" onchange="importData(event)">
 <input type="file" id="photo-file" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+<input type="file" id="photo-camera" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(event)">
 
 <!-- ══ HOME ══ -->
 <div id="pg-home" class="pg active">
@@ -1374,19 +1375,26 @@ function addPersonFormHtml(p){
   <div class="fg">
     <label class="fl">PHOTO</label>
     <div id="photo-area" style="display:flex;align-items:center;gap:12px">
-      <div id="photo-preview-wrap" style="width:60px;height:60px;border-radius:14px;overflow:hidden;flex-shrink:0;background:var(--sf3);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer" onclick="document.getElementById('photo-file').click()">
+      <div id="photo-preview-wrap" style="width:64px;height:64px;border-radius:14px;overflow:hidden;flex-shrink:0;background:var(--sf3);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;position:relative">
         ${p&&p.photo
           ?`<img id="photo-preview" src="${p.photo}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
           :`<img id="photo-preview" src="" style="width:100%;height:100%;object-fit:cover;display:none"/>
-            <svg id="photo-placeholder" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`
+            <svg id="photo-placeholder" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`
         }
       </div>
       <div style="flex:1;min-width:0">
-        <button type="button" class="btn btn-g" style="font-size:.8rem;padding:8px 14px;width:100%" onclick="document.getElementById('photo-file').click()" id="photo-upload-btn">
-          ${p&&p.photo?'Change Photo':'Upload Photo'}
-        </button>
-        <div id="photo-status" style="font-size:.68rem;margin-top:5px;color:${p&&p.photo?'var(--green)':'var(--t3)'}">
-          ${p&&p.photo?'✓ Photo saved':'Tap to upload a photo'}
+        <div style="display:flex;gap:7px;margin-bottom:6px">
+          <button type="button" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sf2);color:var(--t1);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer" onclick="document.getElementById('photo-camera').click()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Camera
+          </button>
+          <button type="button" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sf2);color:var(--t1);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer" onclick="document.getElementById('photo-file').click()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Gallery
+          </button>
+        </div>
+        <div id="photo-status" style="font-size:.68rem;color:${p&&p.photo?'var(--green)':'var(--t3)'}">
+          ${p&&p.photo?'✓ Photo saved':'Take a photo or choose from gallery'}
         </div>
       </div>
     </div>
@@ -1395,10 +1403,24 @@ function addPersonFormHtml(p){
     <label class="fl">NOTES</label>
     <textarea class="fi" id="f-notes" rows="2" placeholder="Favourite things, memories…" style="resize:none">${p?esc(p.notes||''):''}</textarea>
   </div>
-  <div class="fg" style="display:flex;align-items:center;gap:10px">
-    <input type="checkbox" id="f-fav" style="width:16px;height:16px;accent-color:var(--blue);cursor:pointer" ${p&&p.fav?'checked':''}>
-    <label for="f-fav" style="font-size:.88rem;font-weight:500;cursor:pointer">Mark as Favourite ⭐</label>
-  </div>
+  <button type="button" id="f-fav-btn" onclick="toggleFavBtn()" style="-webkit-appearance:none;appearance:none;width:100%;display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sf2);cursor:pointer;font-family:'Inter',sans-serif;transition:border-color .15s,background .15s" data-fav="${p&&p.fav?'1':'0'}">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="f-fav-star" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;transition:transform .2s">
+        ${p&&p.fav
+          ?`<svg width="20" height="20" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+          :`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+        }
+      </span>
+      <div style="text-align:left">
+        <div style="font-size:.88rem;font-weight:600;color:var(--t1)">Mark as Favourite</div>
+        <div id="f-fav-sub" style="font-size:.7rem;color:var(--t3);margin-top:1px">${p&&p.fav?'Starred — shows in Favs tab':'Tap to star this contact'}</div>
+      </div>
+    </div>
+    <div id="f-fav-toggle" style="width:42px;height:24px;border-radius:99px;background:${p&&p.fav?'var(--amber)':'var(--sf3)'};border:1px solid ${p&&p.fav?'var(--amber)':'var(--bd)'};position:relative;transition:background .2s,border-color .2s;flex-shrink:0">
+      <div style="position:absolute;top:3px;left:${p&&p.fav?'20px':'3px'};width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>
+    </div>
+  </button>
+  <input type="checkbox" id="f-fav" style="display:none" ${p&&p.fav?'checked':''}>
   <div class="factions">
     <button class="btn btn-g" onclick="closeSheet()">Cancel</button>
     <button class="btn btn-p" onclick="savePerson()">Save</button>
@@ -1434,6 +1456,31 @@ function calcAgeDisplay(){
   t.textContent=msg;b.style.display='flex';
 }
 
+function toggleFavBtn(){
+  const btn=document.getElementById('f-fav-btn');
+  const chk=document.getElementById('f-fav');
+  const star=document.getElementById('f-fav-star');
+  const sub=document.getElementById('f-fav-sub');
+  const toggle=document.getElementById('f-fav-toggle');
+  if(!btn)return;
+  const isNowFav=btn.dataset.fav!=='1';
+  btn.dataset.fav=isNowFav?'1':'0';
+  if(chk)chk.checked=isNowFav;
+  if(star){
+    star.innerHTML=isNowFav
+      ?`<svg width="20" height="20" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+      :`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    star.style.transform='scale(1.3)';setTimeout(()=>star.style.transform='',200);
+  }
+  if(sub)sub.textContent=isNowFav?'Starred — shows in Favs tab':'Tap to star this contact';
+  if(toggle){
+    toggle.style.background=isNowFav?'var(--amber)':'var(--sf3)';
+    toggle.style.borderColor=isNowFav?'var(--amber)':'var(--bd)';
+    toggle.children[0].style.left=isNowFav?'20px':'3px';
+  }
+  btn.style.borderColor=isNowFav?'var(--amber)':'var(--bd)';
+  btn.style.background=isNowFav?'rgba(251,191,36,.06)':'var(--sf2)';
+}
 function savePerson(){
   const name=(document.getElementById('f-name')||{}).value?.trim();
   if(!name){toast('Name is required');return;}
@@ -1482,7 +1529,7 @@ function handlePhotoUpload(e){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
   r.onload=ev=>{
-    compressImage(ev.target.result,400,0.75,compressed=>{
+    compressImage(ev.target.result,1200,0.95,compressed=>{
       _photoData=compressed;
       // Update preview image
       const prev=document.getElementById('photo-preview');
@@ -1497,7 +1544,7 @@ function handlePhotoUpload(e){
       const kb=Math.round(compressed.length*0.75/1024);
       const st=document.getElementById('photo-status');
       if(st){st.textContent=`✓ Photo ready · ${kb}KB`;st.style.color='var(--green)';}
-      toast('Photo uploaded ✓');
+      const kb2=Math.round(compressed.length*0.75/1024);toast(`Photo uploaded ✓ · ${kb2}KB`);
     });
   };
   r.readAsDataURL(f);e.target.value='';
@@ -1903,7 +1950,7 @@ function handleProfilePhotoUpload(e){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
   r.onload=ev=>{
-    compressImage(ev.target.result,200,0.8,compressed=>{
+    compressImage(ev.target.result,600,0.92,compressed=>{
       if(!D.profile)D.profile={};
       D.profile.photo=compressed;save();
       // Update settings avatar
