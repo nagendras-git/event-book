@@ -1263,26 +1263,29 @@ function switchPage(page){
 }
 let _celTotal=0,_celIdx=0,_celOpened={};
 let sortDir={name:1,age:1};
+function celAutoLaunch(idx){
+  // Launch balloons for any card, once — no tap needed
+  if(_celOpened[idx])return;
+  _celOpened[idx]=true;
+  celLaunchBalloons(idx);
+}
+
 function setCelState(total){
   _celTotal=total;_celIdx=0;_celOpened={};
   const wrap=document.getElementById('cel-wrap');
   if(!wrap)return;
 
-  // Auto-launch balloons on load for today events (days===0)
-  // Check first card's days chip text
+  // Auto-launch for ALL cards that are "today" or for the first card always
+  // so user sees animation immediately on load
   for(let i=0;i<total;i++){
     const chip=document.querySelector('#cel-'+i+' .cel-days-chip');
-    if(chip&&chip.textContent.includes('today')){
-      // Launch after a short entry delay so user sees the card first
-      setTimeout(()=>{
-        if(!_celOpened[i]){
-          _celOpened[i]=true;
-          celLaunchBalloons(i);
-        }
-      }, 800);
-      // Add pulse ring to draw attention
+    const isToday=chip&&chip.textContent.includes('today');
+    // Always launch first card; launch any today card
+    if(i===0||isToday){
+      const delay=i===0?600:600+(i*200);
+      setTimeout(()=>celAutoLaunch(i), delay);
       const card=document.getElementById('cel-'+i);
-      if(card)card.classList.add('pulse');
+      if(card&&isToday)card.classList.add('pulse');
     }
   }
 
@@ -1308,6 +1311,8 @@ function celNav(dir){
     if(el)el.style.display=i===_celIdx?'block':'none';
     if(d)d.classList.toggle('on',i===_celIdx);
   }
+  // Launch for newly visible card
+  setTimeout(()=>celAutoLaunch(_celIdx), 300);
 }
 function celLaunchBalloons(idx){
   const wrap=document.getElementById('cel-bl-'+idx);
