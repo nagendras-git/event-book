@@ -209,26 +209,41 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .hero-cell-val{font-size:1rem;font-weight:800;letter-spacing:-.3px;margin-top:3px;}
 
 /* HERO CELEBRATION BANNER */
-.cel-banner{border-radius:var(--rx);overflow:hidden;margin-bottom:6px;position:relative;}
-.cel-banner-bg{position:absolute;inset:0;}
-.cel-banner-body{position:relative;z-index:1;padding:16px;padding-right:128px;padding-bottom:46px;min-height:118px;}
-.cel-eyebrow{font-size:.6rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;opacity:.75;margin-bottom:5px;color:#fff;}
-.cel-name{font-size:clamp(1.1rem,1.3rem,1.3rem);font-weight:800;letter-spacing:-.3px;line-height:1.15;color:#fff;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.cel-sub{font-size:.76rem;opacity:.82;color:#fff;margin-bottom:13px;line-height:1.4;}
-.cel-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.cel-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:.7rem;font-weight:700;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);color:#fff;}
-
-.cel-ava{position:absolute;right:12px;top:14px;border-radius:10px;border:2px solid rgba(255,255,255,.35);overflow:hidden;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;z-index:2;box-shadow:0 3px 12px rgba(0,0,0,.3);}
-.cel-ava.has-photo{width:100px;height:70px;font-size:1.4rem;}
-.cel-ava.no-photo{width:48px;height:48px;font-size:1.2rem;border-radius:12px;}
-.cel-ava img{width:100%;height:100%;object-fit:cover;}
-.cel-dots{display:flex;gap:4px;justify-content:center;margin-top:8px;}
-.cel-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);transition:all .2s;}
-.cel-dot.on{width:14px;border-radius:3px;background:#fff;}
-.cel-nav-wrap{position:relative;}
-.cel-nav-prev,.cel-nav-next{position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.25);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;}
-.cel-nav-prev{left:6px}.cel-nav-next{right:6px}
-.cel-nav-prev svg,.cel-nav-next svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;}
+/* ── Immersive tap-to-reveal banner ── */
+.cel-banner{border-radius:var(--rx);overflow:hidden;margin-bottom:6px;position:relative;cursor:pointer;}
+.cel-banner-photo{width:100%;height:260px;position:relative;overflow:hidden;}
+.cel-banner-photo-inner{position:absolute;inset:0;background-size:cover;background-position:center center;transition:transform .5s ease,filter .4s ease;}
+.cel-banner.open .cel-banner-photo-inner{filter:brightness(.4);transform:scale(1.04);}
+.cel-initials{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5rem;font-weight:800;color:rgba(255,255,255,.1);font-family:'Inter',sans-serif;user-select:none;letter-spacing:-.05em;}
+.cel-photo-scrim{position:absolute;bottom:0;left:0;right:0;height:130px;background:linear-gradient(to top,rgba(0,0,0,.8) 0%,transparent 100%);pointer-events:none;z-index:1;}
+.cel-photo-info{position:absolute;bottom:0;left:0;right:0;padding:14px 14px 12px;z-index:2;}
+.cel-days-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.18);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:.6rem;font-weight:700;padding:4px 10px;border-radius:99px;margin-bottom:6px;letter-spacing:.03em;}
+.cel-name{font-size:1.25rem;font-weight:800;color:#fff;letter-spacing:-.4px;line-height:1.1;text-shadow:0 1px 8px rgba(0,0,0,.5);}
+.cel-sub{font-size:.72rem;color:rgba(255,255,255,.72);margin-top:3px;}
+.cel-tap-hint{position:absolute;bottom:13px;right:13px;z-index:3;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.13);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.8);font-size:.6rem;font-weight:700;padding:5px 11px;border-radius:99px;letter-spacing:.03em;transition:opacity .3s;}
+.cel-tap-hint svg{width:11px;height:11px;stroke:rgba(255,255,255,.8);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.cel-banner.open .cel-tap-hint{opacity:0;pointer-events:none;}
+/* Slide-up reveal panel */
+.cel-reveal{position:absolute;bottom:0;left:0;right:0;z-index:10;background:rgba(10,12,18,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);padding:14px 14px 16px;transform:translateY(101%);transition:transform .36s cubic-bezier(.16,1,.3,1);border-top:1px solid rgba(255,255,255,.08);}
+.cel-banner.open .cel-reveal{transform:translateY(0);}
+.cel-reveal-name{font-size:.92rem;font-weight:800;color:#fff;letter-spacing:-.2px;margin-bottom:2px;}
+.cel-reveal-sub{font-size:.7rem;color:rgba(255,255,255,.5);margin-bottom:11px;}
+.cel-reveal-btns{display:flex;gap:8px;}
+.cel-btn{-webkit-appearance:none;appearance:none;flex:1;height:36px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;font-size:.76rem;font-weight:700;line-height:1;font-family:'Inter',sans-serif;cursor:pointer;border:none;transition:transform .1s,opacity .12s;box-sizing:border-box;text-decoration:none;white-space:nowrap;-webkit-font-smoothing:antialiased;}
+.cel-btn:active{transform:scale(.96);opacity:.8;}
+.cel-btn.call{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;}
+.cel-btn.wish{background:#25d366;color:#fff;}
+.cel-btn svg{width:12px;height:12px;flex-shrink:0;}
+.cel-reveal-close{position:absolute;top:11px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.1);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.6);font-size:.78rem;font-family:'Inter',sans-serif;}
+/* Balloon layer */
+.cel-balloons{position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden;}
+.cel-balloon{position:absolute;bottom:-60px;font-size:1.5rem;opacity:0;animation:none;}
+.cel-balloon.go{animation:celFloat var(--dur,3s) ease-out var(--delay,0s) forwards;}
+@keyframes celFloat{0%{bottom:-60px;opacity:1;transform:translateX(0)}50%{opacity:1;transform:translateX(var(--sway,15px))}100%{bottom:110%;opacity:0;transform:translateX(calc(var(--sway,15px)*-.6))}}
+/* Dots */
+.cel-dots-bar{display:flex;align-items:center;justify-content:center;gap:5px;padding:10px 0 2px;}
+.cel-dot{width:5px;height:5px;border-radius:50%;background:var(--bd);transition:all .25s var(--spring);}
+.cel-dot.on{width:18px;border-radius:3px;background:var(--blue);}
 
 /* TODAY EVENTS STRIP */
 .today-strip{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);overflow:hidden;}
@@ -799,73 +814,100 @@ function renderHome(){
   const pName=D.profile&&D.profile.name?D.profile.name:'';
   const nmEl=document.getElementById('hdr-nm');
   if(nmEl)nmEl.textContent=pName?pName+"'s Event Book":'Event Book';
-  // Update home avatar
   const aviEl=document.getElementById('home-avi');
   if(aviEl){
     if(D.profile&&D.profile.photo){
       aviEl.innerHTML=`<img src="${D.profile.photo}" style="width:100%;height:100%;object-fit:cover"/>`;
     } else {
       aviEl.textContent=pName?pName[0].toUpperCase():'E';
-      aviEl.style.background=pName?'var(--blue)':'var(--blue)';
+      aviEl.style.background='var(--blue)';
     }
   }
-  const c=document.getElementById('home-content');
+
+  const el=document.getElementById('home-content');
   const todayEvs=getTodayEvents();
   const upcoming=getUpcoming7();
   let html='';
 
-  // Build celebration cards for banner
+  // ── BANNER CAROUSEL ──
   const bannerCards=[];
   todayEvs.forEach(({p,type})=>bannerCards.push({p,type,days:0}));
   upcoming.slice(0,4).forEach(ev=>bannerCards.push(ev));
 
-  // No stats hero card — banner + today sections are enough
-
-  // Celebration banner carousel
   if(bannerCards.length>0){
-    html+=`<div id="cel-wrap" style="position:relative;margin-bottom:4px">`;
+    html+=`<div id="cel-wrap" style="position:relative">`;
     bannerCards.forEach((ev,i)=>{
       const p=ev.p,isBd=ev.type==='birthday',days=ev.days;
       const age=isBd?getAgeNextBday(p.dob):null;
       const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
-      // Same gradient for all cards — consistent look
-      const grad=isBd?'linear-gradient(145deg,#1e40af 0%,#2563eb 40%,#4f46e5 100%)':'linear-gradient(145deg,#064e3b 0%,#0d9488 50%,#0891b2 100%)';
-      const eyebrow=days===0?(isBd?'🎂 Birthday Today!':'💍 Anniversary Today!'):(isBd?`🎂 Birthday in ${days} day${days>1?'s':''}`:`💍 Anniversary in ${days} day${days>1?'s':''}`);
       const subLine=isBd?(age?`Turning ${age} years old`:'Celebrating today'):(yrs?`${yrs} beautiful years together`:'Celebrating together');
       const avBg=avColor(p.name);
-      const avContent=p.photo?`<img src="${p.photo}"/>`:`${avInitials(p.name)}`;
-      html+=`<div class="cel-banner" id="cel-${i}" style="display:${i===0?'block':'none'}">
-        <div class="cel-banner-bg" style="background:${grad}"></div>
-        <div class="cel-banner-body" style="padding-right:${p.photo?'128px':'72px'}">
-          <div class="cel-eyebrow">${eyebrow}</div>
-          <div class="cel-name">${p.name}</div>
-          <div class="cel-sub">${subLine}</div>
-          <div class="cel-row" style="flex-wrap:nowrap;gap:7px">
-            <div class="cel-badge" style="flex-shrink:0">⏰ ${days===0?'Today':'In '+days+'d'}</div>
-              ${p.phone?`<a href="tel:${p.phone}" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);text-decoration:none;flex-shrink:0;color:#fff;font-family:'Inter',sans-serif;font-size:.76rem;font-weight:700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3730a3" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg>Call</a>`:''}
-              ${p.phone?`<button onclick="openWishSheet('${p.id}','${ev.type}')" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;font-family:'Inter',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="16" fill="white"/><path fill="#16a34a" d="M23.5 19.6c-.3-.15-1.8-.9-2.1-1-.3-.1-.5-.15-.7.15-.2.3-.8 1-.97 1.2-.18.2-.36.22-.66.07-1.82-.91-3.02-1.62-4.23-3.68-.32-.55.32-.51.91-1.7.1-.2.05-.37-.03-.52-.07-.14-.7-1.67-.95-2.29-.25-.6-.5-.52-.7-.53-.18 0-.38-.01-.58-.01s-.53.07-.81.38c-.28.3-1.07 1.05-1.07 2.56s1.1 2.97 1.25 3.17c.16.2 2.16 3.3 5.24 4.63.73.32 1.3.51 1.75.65.73.23 1.4.2 1.93.12.59-.09 1.81-.74 2.07-1.46.25-.72.25-1.33.18-1.46-.08-.13-.28-.2-.58-.35z"/></svg>Send Wishes</button>`:''}
+      const daysLabel=days===0?'Today ✨':`In ${days} day${days>1?'s':''}`;
+      const eventLabel=isBd?`🎂 Birthday${days===0?' today':''}`:`💍 Anniversary${days===0?' today':''}`;
+      const gradMap={birthday:'linear-gradient(160deg,#1e3a8a,#312e81)',anniversary:'linear-gradient(160deg,#064e3b,#0d9488)'};
+      const bgStyle=p.photo
+        ?`background-image:url('${p.photo}');background-size:cover;background-position:center center;`
+        :`background:${gradMap[ev.type]||gradMap.birthday};`;
+      const dotsHtml=bannerCards.length>1
+        ?`<div class="cel-dots-bar">${bannerCards.map((_,di)=>`<div class="cel-dot${di===0?' on':''}" id="cdot-${di}"></div>`).join('')}</div>`
+        :'';
+      const BALLOONS=[
+        {e:'🎈',x:12,sw:'-18px',d:.1,t:2.8},{e:'🎊',x:55,sw:'22px',d:.4,t:3.1},
+        {e:'🎉',x:30,sw:'-12px',d:.7,t:2.6},{e:'🎈',x:78,sw:'15px',d:.2,t:3.3},
+        {e:'🎊',x:88,sw:'-20px',d:.9,t:2.9},{e:'🎉',x:8,sw:'10px',d:.5,t:3.0},
+        {e:'🎈',x:50,sw:'-25px',d:.3,t:2.7},{e:'🎊',x:66,sw:'20px',d:.8,t:3.2},
+      ];
+      const balloonMarkup=BALLOONS.map(b=>`<div class="cel-balloon" style="left:${b.x}%;--sway:${b.sw};--dur:${b.t}s;--delay:${b.d}s">${b.e}</div>`).join('');
+      html+=`<div class="cel-banner" id="cel-${i}" style="display:${i===0?'block':'none'}" onclick="celTap(event,${i},'${p.id}','${ev.type}')">
+        <div class="cel-banner-photo">
+          <div class="cel-banner-photo-inner" style="${bgStyle}">
+            ${!p.photo?`<div class="cel-initials">${avInitials(p.name)}</div>`:''}
+          </div>
+          <div class="cel-photo-scrim"></div>
+          <div class="cel-balloons" id="cel-bl-${i}">${balloonMarkup}</div>
+          <div class="cel-photo-info">
+            <div class="cel-days-chip">${eventLabel} · ${daysLabel}</div>
+            <div class="cel-name">${p.name}</div>
+            <div class="cel-sub">${subLine}</div>
+          </div>
+          <div class="cel-tap-hint">
+            <svg viewBox="0 0 24 24"><path d="M15.05 5A5 5 0 0119 8.95M15.05 1A9 9 0 0123 8.94M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            Tap to reach
           </div>
         </div>
-        <div class="cel-ava ${p.photo?'has-photo':'no-photo'}" style="background:${avBg}">${avContent}</div>
-        ${bannerCards.length>1?`<div style="position:absolute;bottom:12px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:5px;z-index:5"><div id="cel-dots" style="display:flex;gap:5px;align-items:center">${bannerCards.map((_,i)=>`<div class="cel-dot${i===0?' on':''}" id="cdot-${i}"></div>`).join('')}</div></div>`:''}
+        <div class="cel-reveal" id="cel-rv-${i}">
+          <button class="cel-reveal-close" onclick="celClose(event,${i})">✕</button>
+          <div class="cel-reveal-name">${p.name}</div>
+          <div class="cel-reveal-sub">${eventLabel} · ${subLine}</div>
+          <div class="cel-reveal-btns">
+            ${p.phone
+              ?`<a href="tel:${(p.cc||'91')+p.phone}" class="cel-btn call" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg>Call</a>`
+              :`<div style="flex:1;font-size:.7rem;color:rgba(255,255,255,.4);display:flex;align-items:center">No number saved</div>`
+            }
+            ${p.phone
+              ?`<button class="cel-btn wish" onclick="event.stopPropagation();openWishSheet('${p.id}','${ev.type}')"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>Send Wishes</button>`
+              :''
+            }
+          </div>
+        </div>
       </div>`;
     });
-    // Nav footer injected inside each card — no external row needed
     html+=`</div>`;
-    // Store card count for nav
-    // _celTotal is set after innerHTML via setCelState()
+    if(bannerCards.length>1){
+      html+=`<div class="cel-dots-bar" id="cel-dots-outer">${bannerCards.map((_,di)=>`<div class="cel-dot${di===0?' on':''}" id="cdot-${di}"></div>`).join('')}</div>`;
+    }
   } else {
-    html+=`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);padding:20px 16px;text-align:center;color:var(--t3);margin-bottom:4px">
+    html+=`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);padding:20px 16px;text-align:center;color:var(--t3)">
       <div style="font-size:1.4rem;margin-bottom:6px;opacity:.4">🎉</div>
       <div style="font-size:.84rem">No upcoming celebrations.<br>Add people to see them here!</div>
     </div>`;
   }
 
-  // Today section
+  // ── TODAY ──
   html+=`<div class="lbl" style="padding:0 2px">TODAY</div>`;
   if(todayEvs.length===0){
     html+=`<div class="today-strip"><div style="text-align:center;padding:24px 16px;color:var(--t3)"><div style="font-size:1.3rem;margin-bottom:6px;opacity:.4">🎂</div><div style="font-size:.84rem">No celebrations today</div></div></div>`;
-  }else{
+  } else {
     html+=`<div class="today-strip">`;
     todayEvs.forEach(({p,type})=>{
       const isBd=type==='birthday';
@@ -879,19 +921,19 @@ function renderHome(){
           <div class="today-sub">${sub}</div>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-          ${p.phone?`<a href="tel:${p.phone}" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:var(--blue-bg);border:1px solid var(--blue-bd);text-decoration:none;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg></a>`:''}
-          ${p.phone?`<button class="today-wa" onclick="openWishSheet('${p.id}','${type}')"><svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="16" fill="#25d366"/><path fill="#fff" d="M23.5 19.6c-.3-.15-1.8-.9-2.1-1-.3-.1-.5-.15-.7.15-.2.3-.8 1-.97 1.2-.18.2-.36.22-.66.07-1.82-.91-3.02-1.62-4.23-3.68-.32-.55.32-.51.91-1.7.1-.2.05-.37-.03-.52-.07-.14-.7-1.67-.95-2.29-.25-.6-.5-.52-.7-.53-.18 0-.38-.01-.58-.01s-.53.07-.81.38c-.28.3-1.07 1.05-1.07 2.56s1.1 2.97 1.25 3.17c.16.2 2.16 3.3 5.24 4.63.73.32 1.3.51 1.75.65.73.23 1.4.2 1.93.12.59-.09 1.81-.74 2.07-1.46.25-.72.25-1.33.18-1.46-.08-.13-.28-.2-.58-.35z"/></svg></button>`:'<span style="font-size:.7rem;color:var(--t3)">No number</span>'}
+          ${p.phone?`<a href="tel:${(p.cc||'91')+p.phone}" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:var(--blue-bg);border:1px solid var(--blue-bd);text-decoration:none;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg></a>`:''}
+          ${p.phone?`<button class="today-wa" onclick="openWishSheet('${p.id}','${type}')"><svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="16" fill="#25d366"/><path fill="#fff" d="M23.5 19.6c-.3-.15-1.8-.9-2.1-1-.3-.1-.5-.15-.7.15-.2.3-.8 1-.97 1.2-.18.2-.36.22-.66.07-1.82-.91-3.02-1.62-4.23-3.68-.32-.55.32-.51.91-1.7.1-.2.05-.37-.03-.52-.07-.14-.7-1.67-.95-2.29-.25-.6-.5-.52-.7-.53-.18 0-.38-.01-.58-.01s-.53.07-.81.38c-.28.3-1.07 1.05-1.07 2.56s1.1 2.97 1.25 3.17c.16.2 2.16 3.3 5.24 4.63.73.32 1.3.51 1.75.65.73.23 1.4.2 1.93.12.59-.09 1.81-.74 2.07-1.46.25-.72.25-1.33.18-1.46-.08-.13-.28-.2-.58-.35z"/></svg></button>`:`<span style="font-size:.7rem;color:var(--t3)">No number</span>`}
         </div>
       </div>`;
     });
     html+=`</div>`;
   }
 
-  // Upcoming
+  // ── UPCOMING ──
   html+=`<div class="lbl" style="padding:0 2px;margin-top:4px">UPCOMING — NEXT 7 DAYS</div>`;
   if(upcoming.length===0){
     html+=`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx)"><div style="text-align:center;padding:20px 16px;color:var(--t3);font-size:.84rem">Nothing in the next 7 days</div></div>`;
-  }else{
+  } else {
     html+=`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);overflow:hidden">`;
     upcoming.forEach(({p,type,days})=>{
       const isBd=type==='birthday';
@@ -899,7 +941,7 @@ function renderHome(){
       const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
       const sub=isBd?(age?`Turns ${age} · ${fmtFull(p.dob)}`:`Birthday · ${fmtFull(p.dob)}`):(yrs?`${yrs} yrs · ${fmtFull(p.anniv)}`:`Anniversary · ${fmtFull(p.anniv)}`);
       const dayColor=days===1?'var(--amber)':'var(--blue)';
-      html+=`<div class="up-item" onclick="${p.phone?`"openWishSheet('${p.id}','${type}')"`:''}" style="${p.phone?'cursor:pointer':''}">
+      html+=`<div class="up-item">
         ${avHtml(p,34,9)}
         <div class="up-body">
           <div class="up-name">${p.name} ${isBd?'🎂':'💍'}</div>
@@ -916,8 +958,7 @@ function renderHome(){
     Add Person
   </div>`;
 
-  c.innerHTML=html;
-  // Set carousel state AFTER DOM is set — cannot use <script> inside innerHTML
+  el.innerHTML=html;
   setCelState(bannerCards.length);
 }
 
@@ -1195,11 +1236,10 @@ function switchPage(page){
   else if(page==='calendar')renderCalendar();
   else if(page==='settings')renderSettings();
 }
-let _celTotal=0,_celIdx=0;
-let sortDir={name:1,age:1}; // 1=asc, -1=desc
+let _celTotal=0,_celIdx=0,_celOpened={};
+let sortDir={name:1,age:1};
 function setCelState(total){
-  _celTotal=total;_celIdx=0;
-  // Add swipe support
+  _celTotal=total;_celIdx=0;_celOpened={};
   const wrap=document.getElementById('cel-wrap');
   if(!wrap||wrap._swipeSet)return;
   wrap._swipeSet=true;
@@ -1215,11 +1255,33 @@ function celNav(dir){
   if(_celTotal<=1)return;
   _celIdx=(_celIdx+dir+_celTotal)%_celTotal;
   for(let i=0;i<_celTotal;i++){
-    const c=document.getElementById('cel-'+i);
+    const el=document.getElementById('cel-'+i);
     const d=document.getElementById('cdot-'+i);
-    if(c)c.style.display=i===_celIdx?'block':'none';
+    if(el)el.style.display=i===_celIdx?'block':'none';
     if(d)d.classList.toggle('on',i===_celIdx);
   }
+}
+function celTap(e,idx,pid,type){
+  if(e.target.closest('.cel-reveal-close'))return;
+  const card=document.getElementById('cel-'+idx);
+  if(!card)return;
+  if(card.classList.contains('open'))return;
+  card.classList.add('open');
+  // Launch balloons once per card
+  if(!_celOpened[idx]){
+    _celOpened[idx]=true;
+    const wrap=document.getElementById('cel-bl-'+idx);
+    if(wrap){
+      wrap.querySelectorAll('.cel-balloon').forEach((b,i)=>{
+        setTimeout(()=>{b.classList.add('go');},i*60);
+      });
+    }
+  }
+}
+function celClose(e,idx){
+  e.stopPropagation();
+  const card=document.getElementById('cel-'+idx);
+  if(card)card.classList.remove('open');
 }
 function renderAll(){
   if(currentPage==='home')renderHome();
@@ -1311,12 +1373,22 @@ function addPersonFormHtml(p){
   </div>
   <div class="fg">
     <label class="fl">PHOTO</label>
-    <div id="photo-area" style="display:flex;align-items:center;gap:10px">
-      ${p&&p.photo?`<img src="${p.photo}" style="width:52px;height:52px;border-radius:12px;object-fit:cover;border:1px solid var(--bd)" id="photo-preview"/>`:
-        `<div id="photo-preview" style="display:none;width:52px;height:52px;border-radius:12px;object-fit:cover;"></div>`}
-      <button type="button" class="btn btn-g" style="font-size:.8rem;padding:8px 14px" onclick="document.getElementById('photo-file').click()">
-        ${p&&p.photo?'Change Photo':'Upload Photo'}
-      </button>
+    <div id="photo-area" style="display:flex;align-items:center;gap:12px">
+      <div id="photo-preview-wrap" style="width:60px;height:60px;border-radius:14px;overflow:hidden;flex-shrink:0;background:var(--sf3);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer" onclick="document.getElementById('photo-file').click()">
+        ${p&&p.photo
+          ?`<img id="photo-preview" src="${p.photo}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
+          :`<img id="photo-preview" src="" style="width:100%;height:100%;object-fit:cover;display:none"/>
+            <svg id="photo-placeholder" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`
+        }
+      </div>
+      <div style="flex:1;min-width:0">
+        <button type="button" class="btn btn-g" style="font-size:.8rem;padding:8px 14px;width:100%" onclick="document.getElementById('photo-file').click()" id="photo-upload-btn">
+          ${p&&p.photo?'Change Photo':'Upload Photo'}
+        </button>
+        <div id="photo-status" style="font-size:.68rem;margin-top:5px;color:${p&&p.photo?'var(--green)':'var(--t3)'}">
+          ${p&&p.photo?'✓ Photo saved':'Tap to upload a photo'}
+        </div>
+      </div>
     </div>
   </div>
   <div class="fg">
@@ -1412,10 +1484,20 @@ function handlePhotoUpload(e){
   r.onload=ev=>{
     compressImage(ev.target.result,400,0.75,compressed=>{
       _photoData=compressed;
+      // Update preview image
       const prev=document.getElementById('photo-preview');
-      if(prev){prev.src=compressed;prev.style.cssText='display:block;width:52px;height:52px;border-radius:12px;object-fit:cover;border:1px solid var(--bd)';}
+      if(prev){prev.src=compressed;prev.style.display='block';}
+      // Hide placeholder icon
+      const ph=document.getElementById('photo-placeholder');
+      if(ph)ph.style.display='none';
+      // Update button label
+      const btn=document.getElementById('photo-upload-btn');
+      if(btn)btn.textContent='Change Photo';
+      // Update status
       const kb=Math.round(compressed.length*0.75/1024);
-      toast(`Photo ready · ~${kb}KB`);
+      const st=document.getElementById('photo-status');
+      if(st){st.textContent=`✓ Photo ready · ${kb}KB`;st.style.color='var(--green)';}
+      toast('Photo uploaded ✓');
     });
   };
   r.readAsDataURL(f);e.target.value='';
