@@ -224,22 +224,33 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .cel-tap-hint svg{width:11px;height:11px;stroke:rgba(255,255,255,.8);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
 .cel-banner.open .cel-tap-hint{opacity:0;pointer-events:none;}
 /* Slide-up reveal panel */
-.cel-reveal{position:absolute;bottom:0;left:0;right:0;z-index:10;background:rgba(10,12,18,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);padding:14px 14px 16px;transform:translateY(101%);transition:transform .36s cubic-bezier(.16,1,.3,1);border-top:1px solid rgba(255,255,255,.08);}
+.cel-reveal{position:absolute;bottom:0;left:0;right:0;z-index:10;background:rgba(18,22,32,.72);backdrop-filter:saturate(180%) blur(32px);-webkit-backdrop-filter:saturate(180%) blur(32px);padding:16px 14px 20px;transform:translateY(101%);transition:transform .38s cubic-bezier(.16,1,.3,1);border-top:1px solid rgba(255,255,255,.12);box-shadow:0 -1px 0 rgba(255,255,255,.06);}
 .cel-banner.open .cel-reveal{transform:translateY(0);}
 .cel-reveal-name{font-size:.92rem;font-weight:800;color:#fff;letter-spacing:-.2px;margin-bottom:2px;}
 .cel-reveal-sub{font-size:.7rem;color:rgba(255,255,255,.5);margin-bottom:11px;}
 .cel-reveal-btns{display:flex;gap:8px;}
-.cel-btn{-webkit-appearance:none;appearance:none;flex:1;height:36px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;font-size:.76rem;font-weight:700;line-height:1;font-family:'Inter',sans-serif;cursor:pointer;border:none;transition:transform .1s,opacity .12s;box-sizing:border-box;text-decoration:none;white-space:nowrap;-webkit-font-smoothing:antialiased;}
-.cel-btn:active{transform:scale(.96);opacity:.8;}
-.cel-btn.call{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;}
-.cel-btn.wish{background:#25d366;color:#fff;}
-.cel-btn svg{width:12px;height:12px;flex-shrink:0;}
-.cel-reveal-close{position:absolute;top:11px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.1);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.6);font-size:.78rem;font-family:'Inter',sans-serif;}
+.cel-btn{-webkit-appearance:none;appearance:none;flex:1;height:46px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:99px;font-size:.84rem;font-weight:700;line-height:1;font-family:'Inter',sans-serif;cursor:pointer;transition:transform .18s cubic-bezier(.34,1.56,.64,1),opacity .12s;box-sizing:border-box;text-decoration:none;white-space:nowrap;-webkit-font-smoothing:antialiased;letter-spacing:.02em;position:relative;overflow:hidden;}
+.cel-btn::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.12),transparent);border-radius:99px 99px 0 0;pointer-events:none;}
+.cel-btn:active{transform:scale(.93);}
+.cel-btn.call{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#fff;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+.cel-btn.wish{background:linear-gradient(160deg,rgba(52,211,153,.95),rgba(37,211,102,.88));border:1px solid rgba(255,255,255,.2);color:#fff;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+.cel-btn svg{width:16px;height:16px;flex-shrink:0;position:relative;z-index:1;}
+.cel-btn span{position:relative;z-index:1;}
+.cel-reveal-close{position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.75);font-size:.8rem;font-family:'Inter',sans-serif;transition:background .12s,transform .12s;}
+.cel-reveal-close:active{background:rgba(255,255,255,.22);transform:scale(.9);}
 /* Balloon layer */
 .cel-balloons{position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden;}
 .cel-balloon{position:absolute;bottom:-60px;font-size:1.5rem;opacity:0;animation:none;}
 .cel-balloon.go{animation:celFloat var(--dur,3s) ease-out var(--delay,0s) forwards;}
-@keyframes celFloat{0%{bottom:-60px;opacity:1;transform:translateX(0)}50%{opacity:1;transform:translateX(var(--sway,15px))}100%{bottom:110%;opacity:0;transform:translateX(calc(var(--sway,15px)*-.6))}}
+@keyframes celFloat{0%{bottom:-60px;opacity:1;transform:translateX(0) rotate(0deg)}40%{opacity:1;transform:translateX(var(--sway,15px)) rotate(var(--rot,8deg))}70%{opacity:.8;transform:translateX(calc(var(--sway,15px)*-.4)) rotate(calc(var(--rot,8deg)*-.5))}100%{bottom:115%;opacity:0;transform:translateX(calc(var(--sway,15px)*.2)) rotate(0deg)}}
+/* Confetti burst */
+.cel-confetti{position:absolute;pointer-events:none;z-index:4;overflow:hidden;inset:0;}
+.cel-conf{position:absolute;width:7px;height:7px;border-radius:2px;opacity:0;}
+.cel-conf.go{animation:confFall var(--cdur,2s) ease-in var(--cdelay,0s) forwards;}
+@keyframes confFall{0%{opacity:1;transform:translateY(var(--cy,-120px)) translateX(0) rotate(0deg) scale(1)}60%{opacity:1;transform:translateY(calc(var(--cy,-120px) + 80px)) translateX(var(--cx,30px)) rotate(var(--cr,180deg)) scale(.8)}100%{opacity:0;transform:translateY(40px) translateX(calc(var(--cx,30px)*1.4)) rotate(calc(var(--cr,180deg)*2)) scale(.3)}}
+/* Shimmer pulse on banner on load */
+@keyframes bannerPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}50%{box-shadow:0 0 0 3px rgba(255,255,255,.12)}}
+.cel-banner.pulse{animation:bannerPulse 1.8s ease-in-out 3;}
 /* Dots */
 .cel-dots-bar{display:flex;align-items:center;justify-content:center;gap:5px;padding:10px 0 2px;}
 .cel-dot{width:5px;height:5px;border-radius:50%;background:var(--bd);transition:all .25s var(--spring);}
@@ -858,7 +869,19 @@ function renderHome(){
         {e:'🎊',x:88,sw:'-20px',d:.9,t:2.9},{e:'🎉',x:8,sw:'10px',d:.5,t:3.0},
         {e:'🎈',x:50,sw:'-25px',d:.3,t:2.7},{e:'🎊',x:66,sw:'20px',d:.8,t:3.2},
       ];
-      const balloonMarkup=BALLOONS.map(b=>`<div class="cel-balloon" style="left:${b.x}%;--sway:${b.sw};--dur:${b.t}s;--delay:${b.d}s">${b.e}</div>`).join('');
+      const balloonMarkup=BALLOONS.map(b=>`<div class="cel-balloon" style="left:${b.x}%;--sway:${b.sw};--dur:${b.t}s;--delay:${b.d}s;--rot:${b.r||'8deg'}">${b.e}</div>`).join('');
+      const CONF_COLORS=['#fbbf24','#60a5fa','#34d399','#f87171','#a78bfa','#fb923c','#fff'];
+      const confMarkup=Array.from({length:22},(_,i)=>{
+        const col=CONF_COLORS[i%CONF_COLORS.length];
+        const cx=(Math.random()*240-120).toFixed(0)+'px';
+        const cy=(-80-Math.random()*100).toFixed(0)+'px';
+        const cr=(Math.random()*360).toFixed(0)+'deg';
+        const left=(10+Math.random()*80).toFixed(0)+'%';
+        const cdur=(1.2+Math.random()*.8).toFixed(2)+'s';
+        const cdel=(Math.random()*.5).toFixed(2)+'s';
+        const w=i%3===0?'9px':'6px';const h=i%3===0?'5px':'9px';
+        return `<div class="cel-conf" style="left:${left};top:50%;background:${col};width:${w};height:${h};--cx:${cx};--cy:${cy};--cr:${cr};--cdur:${cdur};--cdelay:${cdel}"></div>`;
+      }).join('');
       html+=`<div class="cel-banner" id="cel-${i}" style="display:${i===0?'block':'none'}" onclick="celTap(event,${i},'${p.id}','${ev.type}')">
         <div class="cel-banner-photo">
           <div class="cel-banner-photo-inner" style="${bgStyle}">
@@ -866,6 +889,7 @@ function renderHome(){
           </div>
           <div class="cel-photo-scrim"></div>
           <div class="cel-balloons" id="cel-bl-${i}">${balloonMarkup}</div>
+          <div class="cel-confetti" id="cel-cf-${i}">${confMarkup}</div>
           <div class="cel-photo-info">
             <div class="cel-days-chip">${eventLabel} · ${daysLabel}</div>
             <div class="cel-name">${p.name}</div>
@@ -882,11 +906,11 @@ function renderHome(){
           <div class="cel-reveal-sub">${eventLabel} · ${subLine}</div>
           <div class="cel-reveal-btns">
             ${p.phone
-              ?`<a href="tel:${(p.cc||'91')+p.phone}" class="cel-btn call" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg>Call</a>`
+              ?`<a href="tel:${(p.cc||'91')+p.phone}" class="cel-btn call" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg><span>Call</span></a>`
               :`<div style="flex:1;font-size:.7rem;color:rgba(255,255,255,.4);display:flex;align-items:center">No number saved</div>`
             }
             ${p.phone
-              ?`<button class="cel-btn wish" onclick="event.stopPropagation();openWishSheet('${p.id}','${ev.type}')"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>Send Wishes</button>`
+              ?`<button class="cel-btn wish" onclick="event.stopPropagation();openWishSheet('${p.id}','${ev.type}')"><svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="rgba(255,255,255,0.9)" fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.413A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm-2.45 5.5c-.18-.004-.377.005-.565.43-.2.456-.762 1.865-.83 2-.07.133-.14.305-.044.49.1.187.44.684.596.924.157.24.316.53.133.823-.184.295-.778 1.224-1.06 1.605-.28.382-.113.597.023.72.326.293 1.112.82 2.115 1.404 1.222.714 1.97.894 2.287.96.317.066.503-.047.67-.22.167-.172.713-.826.905-1.11.19-.285.382-.236.644-.142.262.094 1.664.785 1.95.928.284.143.474.214.544.332.07.12.07.693-.162 1.362-.233.67-1.374 1.28-1.87 1.317-.497.038-1.017.183-3.42-.72-2.9-1.072-4.73-4.045-4.872-4.233-.14-.187-1.14-1.517-1.14-2.893 0-1.376.72-2.05 1.003-2.334.284-.284.62-.354.826-.354z"/></svg><span>Send Wishes</span></button>`
               :''
             }
           </div>
@@ -1242,14 +1266,37 @@ let sortDir={name:1,age:1};
 function setCelState(total){
   _celTotal=total;_celIdx=0;_celOpened={};
   const wrap=document.getElementById('cel-wrap');
-  if(!wrap||wrap._swipeSet)return;
+  if(!wrap)return;
+
+  // Auto-launch balloons on load for today events (days===0)
+  // Check first card's days chip text
+  for(let i=0;i<total;i++){
+    const chip=document.querySelector('#cel-'+i+' .cel-days-chip');
+    if(chip&&chip.textContent.includes('today')){
+      // Launch after a short entry delay so user sees the card first
+      setTimeout(()=>{
+        if(!_celOpened[i]){
+          _celOpened[i]=true;
+          celLaunchBalloons(i);
+        }
+      }, 800);
+      // Add pulse ring to draw attention
+      const card=document.getElementById('cel-'+i);
+      if(card)card.classList.add('pulse');
+    }
+  }
+
+  if(wrap._swipeSet)return;
   wrap._swipeSet=true;
-  let sx=0,sy=0;
-  wrap.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  let sx=0,sy=0,startT=0;
+  wrap.addEventListener('touchstart',e=>{
+    sx=e.touches[0].clientX;sy=e.touches[0].clientY;startT=Date.now();
+  },{passive:true});
   wrap.addEventListener('touchend',e=>{
     const dx=e.changedTouches[0].clientX-sx;
     const dy=e.changedTouches[0].clientY-sy;
-    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.5) celNav(dx<0?1:-1);
+    const dt=Date.now()-startT;
+    if(dt<400&&Math.abs(dx)>36&&Math.abs(dx)>Math.abs(dy)*1.5) celNav(dx<0?1:-1);
   },{passive:true});
 }
 function celNav(dir){
@@ -1262,21 +1309,29 @@ function celNav(dir){
     if(d)d.classList.toggle('on',i===_celIdx);
   }
 }
+function celLaunchBalloons(idx){
+  const wrap=document.getElementById('cel-bl-'+idx);
+  if(!wrap)return;
+  wrap.querySelectorAll('.cel-balloon').forEach((b,i)=>{
+    setTimeout(()=>b.classList.add('go'),i*55);
+  });
+  // Also fire confetti burst
+  const conf=document.getElementById('cel-cf-'+idx);
+  if(conf){
+    conf.querySelectorAll('.cel-conf').forEach((p,i)=>{
+      setTimeout(()=>p.classList.add('go'),i*30);
+    });
+  }
+}
 function celTap(e,idx,pid,type){
   if(e.target.closest('.cel-reveal-close'))return;
   const card=document.getElementById('cel-'+idx);
   if(!card)return;
   if(card.classList.contains('open'))return;
   card.classList.add('open');
-  // Launch balloons once per card
   if(!_celOpened[idx]){
     _celOpened[idx]=true;
-    const wrap=document.getElementById('cel-bl-'+idx);
-    if(wrap){
-      wrap.querySelectorAll('.cel-balloon').forEach((b,i)=>{
-        setTimeout(()=>{b.classList.add('go');},i*60);
-      });
-    }
+    celLaunchBalloons(idx);
   }
 }
 function celClose(e,idx){
