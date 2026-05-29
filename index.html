@@ -242,8 +242,8 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 /* Balloon layer */
 .cel-balloons{position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden;}
 .cel-balloon{position:absolute;bottom:-60px;font-size:1.6rem;opacity:0;animation:none;}
-.cel-greeting{position:absolute;top:18px;left:0;right:0;text-align:center;font-size:1.05rem;font-weight:800;color:rgba(255,255,255,0);letter-spacing:.01em;pointer-events:none;z-index:5;text-shadow:0 2px 12px rgba(0,0,0,.4);padding:0 16px;animation:greetFadeIn .6s ease .3s forwards;}
-@keyframes greetFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;color:rgba(255,255,255,.92);transform:none}}
+.cel-greeting{position:absolute;bottom:70px;left:0;right:0;text-align:center;font-size:1.05rem;font-weight:800;color:rgba(255,255,255,0);letter-spacing:.01em;pointer-events:none;z-index:5;text-shadow:0 2px 14px rgba(0,0,0,.6);padding:0 16px;animation:greetFloat 2.8s ease-out .1s forwards;}
+@keyframes greetFloat{0%{opacity:0;transform:translateY(16px)}18%{opacity:1;color:rgba(255,255,255,.95);transform:translateY(0)}72%{opacity:1;color:rgba(255,255,255,.95);transform:translateY(-20px)}100%{opacity:0;color:rgba(255,255,255,0);transform:translateY(-36px)}}
 .cel-balloon.go{animation:celFloat var(--dur,3s) ease-out var(--delay,0s) forwards;}
 @keyframes celFloat{0%{bottom:-60px;opacity:1;transform:translateX(0) rotate(0deg)}40%{opacity:1;transform:translateX(var(--sway,15px)) rotate(var(--rot,8deg))}70%{opacity:.8;transform:translateX(calc(var(--sway,15px)*-.4)) rotate(calc(var(--rot,8deg)*-.5))}100%{bottom:115%;opacity:0;transform:translateX(calc(var(--sway,15px)*.2)) rotate(0deg)}}
 /* Confetti burst */
@@ -861,8 +861,8 @@ function renderHome(){
       const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
       const subLine=isBd?(age?`Turning ${age} years old`:'Celebrating today'):(yrs?`${yrs} beautiful years together`:'Celebrating together');
       const avBg=avColor(p.name);
-      const daysLabel=days===0?'Today ✨':`In ${days} day${days>1?'s':''}`;
-      const eventLabel=isBd?`🎂 Birthday${days===0?' today':''}`:`💍 Anniversary${days===0?' today':''}`;
+      const daysLabel=days===0?'':`In ${days} day${days>1?'s':''}`;
+      const eventLabel=isBd?`🎂 ${days===0?'Birthday today ✨':'Birthday'}`:`💍 ${days===0?'Anniversary today ✨':'Anniversary'}`;
       // Rich event-specific gradients — birthday warm/festive, anniversary romantic/warm
       const gradMap={
         birthday: isBd && days===0
@@ -917,7 +917,7 @@ function renderHome(){
           <div class="cel-greeting" id="cel-gr-${i}">${greetingText}</div>
           <div class="cel-confetti" id="cel-cf-${i}">${confMarkup}</div>
           <div class="cel-photo-info">
-            <div class="cel-days-chip">${eventLabel} · ${daysLabel}</div>
+            <div class="cel-days-chip">${eventLabel}${daysLabel?' · '+daysLabel:''}</div>
             <div class="cel-name">${p.name}</div>
             <div class="cel-sub">${subLine}</div>
           </div>
@@ -955,32 +955,28 @@ function renderHome(){
   }
 
   // ── TODAY ──
-  html+=`<div class="lbl" style="padding:0 2px">TODAY</div>`;
-  if(todayEvs.length===0){
-    html+=`<div class="today-strip"><div style="text-align:center;padding:24px 16px;color:var(--t3)"><div style="font-size:1.3rem;margin-bottom:6px;opacity:.4">🎂</div><div style="font-size:.84rem">No celebrations today</div></div></div>`;
-  } else {
-    html+=`<div class="today-strip">`;
+  if(todayEvs.length>0){
+    html+=`<div class="lbl" style="padding:0 2px;margin-bottom:8px">TODAY</div>`;
+    html+=`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx);overflow:hidden;margin-bottom:0">`;
     todayEvs.forEach(({p,type})=>{
       const isBd=type==='birthday';
       const age=isBd?getAgeNextBday(p.dob):null;
       const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
-      const sub=isBd?(age?`Turning ${age} today 🎉`:'Birthday today 🎉'):(yrs?`${yrs} years together 💑`:'Anniversary today 💍');
-      html+=`<div class="today-item" onclick="openPersonDetail('${p.id}')" style="cursor:pointer">
-        ${avHtml(p,40,11)}
-        <div class="today-info">
-          <div class="today-name">${p.name}</div>
-          <div class="today-sub">${sub}</div>
+      const sub=isBd?(age?`Turns ${age} today 🎉`:'Birthday today 🎉'):(yrs?`${yrs} yrs together 💑`:'Anniversary today 💍');
+      html+=`<div class="up-item" onclick="openPersonDetail('${p.id}')" style="cursor:pointer">
+        ${avHtml(p,34,9)}
+        <div class="up-body">
+          <div class="up-name">${p.name} ${isBd?'🎂':'💍'}</div>
+          <div class="up-sub">${sub}</div>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-          ${p.phone?`<a href="tel:${(p.cc||'91')+p.phone}" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:var(--blue-bg);border:1px solid var(--blue-bd);text-decoration:none;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg></a>`:''}
-          ${p.phone?`<button class="today-wa" onclick="openWishSheet('${p.id}','${type}')"><svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="16" fill="#25d366"/><path fill="#fff" d="M23.5 19.6c-.3-.15-1.8-.9-2.1-1-.3-.1-.5-.15-.7.15-.2.3-.8 1-.97 1.2-.18.2-.36.22-.66.07-1.82-.91-3.02-1.62-4.23-3.68-.32-.55.32-.51.91-1.7.1-.2.05-.37-.03-.52-.07-.14-.7-1.67-.95-2.29-.25-.6-.5-.52-.7-.53-.18 0-.38-.01-.58-.01s-.53.07-.81.38c-.28.3-1.07 1.05-1.07 2.56s1.1 2.97 1.25 3.17c.16.2 2.16 3.3 5.24 4.63.73.32 1.3.51 1.75.65.73.23 1.4.2 1.93.12.59-.09 1.81-.74 2.07-1.46.25-.72.25-1.33.18-1.46-.08-.13-.28-.2-.58-.35z"/></svg></button>`:`<span style="font-size:.7rem;color:var(--t3)">No number</span>`}
-        </div>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
       </div>`;
     });
     html+=`</div>`;
   }
 
-  // ── UPCOMING ──
+
+    // ── UPCOMING ──
   html+=`<div class="lbl" style="padding:0 2px;margin-top:4px">UPCOMING — NEXT 7 DAYS</div>`;
   if(upcoming.length===0){
     html+=`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rx)"><div style="text-align:center;padding:20px 16px;color:var(--t3);font-size:.84rem">Nothing in the next 7 days</div></div>`;
@@ -999,6 +995,7 @@ function renderHome(){
           <div class="up-sub">${sub}</div>
         </div>
         <div class="up-days" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:${dayColor}">${days}d</div>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;margin-left:2px"><polyline points="9 18 15 12 9 6"/></svg>
       </div>`;
     });
     html+=`</div>`;
@@ -1212,10 +1209,7 @@ function renderCalendar(){
         <div class="rtitle">${e.p.name}</div>
         <div class="rsub">${isBd?'Birthday':'Anniversary'} · ${fmtFull(isBd?e.p.dob:e.p.anniv)}${age?` · ${age}${isBd?' yrs':' yrs together'}`:''}</div>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        ${e.p.phone?`<a href="tel:${e.p.phone}" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:var(--blue-bg);border:1px solid var(--blue-bd);text-decoration:none;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72 12.66 12.66 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.66 12.66 0 002.81.7A2 2 0 0122 16.92z"/></svg></a>`:''}
-        ${e.p.phone?`<button class="wa-wish-btn" onclick="openWishSheet('${e.p.id}','${e.type}')">${WA}</button>`:''}
-      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
     </div>`;
   }).join('')}</div>`;
 }
@@ -1471,12 +1465,13 @@ function addPersonFormHtml(p){
         <option value="61" ${p&&p.cc==='61'?'selected':''}>🇦🇺 +61</option>
       </select>
       <input class="fi" type="tel" id="f-phone" placeholder="9876543210" value="${p?p.phone||'':''}" style="flex:1"/>
+${'contacts' in navigator && 'ContactsManager' in window ? `
       <button type="button" id="contacts-picker-btn" onclick="pickFromContacts()" style="flex-shrink:0;padding:0 12px;height:42px;border-radius:var(--r);background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .14s;" title="Pick from contacts">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         Contacts
-      </button>
+      </button>` : ''}
     </div>
-    <div id="contacts-picker-note" style="font-size:.7rem;color:var(--t3);margin-top:4px;display:none;">Tap "Contacts" to pick a number from your phone (Android only)</div>
+
   </div>
   <div class="fg">
     <label class="fl">PHOTO</label>
@@ -1786,7 +1781,11 @@ async function regenWishAI() {
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 200,
@@ -2084,9 +2083,7 @@ function openPersonDetail(pid) {
 
 // ── Contacts Picker (Android Chrome only) ──
 async function pickFromContacts() {
-  const note = document.getElementById('contacts-picker-note');
   if (!('contacts' in navigator && 'ContactsManager' in window)) {
-    if (note) { note.style.display = 'block'; }
     toast('Contacts picker not supported on this browser');
     return;
   }
