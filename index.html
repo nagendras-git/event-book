@@ -714,6 +714,7 @@ let editingPersonId=null;
 let wishPerson=null;
 let wishType='birthday';
 let wishTone='emotional';
+let wishLength='medium';
 let editingTmplType='birthday';
 let _photoData=null;
 
@@ -1637,9 +1638,10 @@ function handlePhotoUpload(e){
 function openWishSheet(pid,type){
   wishPerson=D.people.find(p=>p.id===pid);
   if(!wishPerson)return;
-  wishType=type;wishTone='emotional';
+  wishType=type;
+  wishTone=localStorage.getItem('eb-last-tone')||'emotional';
+  wishLength='medium';
   openSheet('wish');
-  // Show template immediately — user can tap Regenerate for AI
 }
 function openWishSheetAuto(pid){
   const p=D.people.find(x=>x.id===pid);if(!p)return;
@@ -1657,32 +1659,54 @@ function wishSheetHtml(){
   const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
   const sub=isBd?(age?`Turning ${age} · ${fmtFull(p.dob)}`:`Birthday · ${fmtFull(p.dob)}`):(yrs?`${yrs} years · ${fmtFull(p.anniv)}`:`Anniversary · ${fmtFull(p.anniv)}`);
 
+  // Wish history for this person+type
+  const histKey='eb-wish-hist-'+p.id+'-'+wishType;
+  const hist=JSON.parse(localStorage.getItem(histKey)||'[]');
+  const histHtml=hist.length?`
+    <div style="margin-bottom:12px">
+      <div class="lbl" style="margin-bottom:6px">LAST SENT <span style="color:var(--t3);font-weight:400;text-transform:none;font-size:.65rem">(tap to reuse)</span></div>
+      <div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:10px 12px;font-size:.78rem;color:var(--t2);cursor:pointer;line-height:1.5" onclick="document.getElementById('wish-ta').value=this.dataset.msg" data-msg="${esc(hist[0].msg)}">
+        <div style="font-size:.62rem;color:var(--t3);margin-bottom:4px">${hist[0].date}</div>
+        ${esc(hist[0].msg).substring(0,120)}${hist[0].msg.length>120?'...':''}
+      </div>
+    </div>`:'';
+
   return`
   <div style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rl);margin-bottom:16px">
     ${avHtml(p,40,11)}
     <div><div style="font-size:.9rem;font-weight:700">${p.name}</div><div style="font-size:.72rem;color:var(--t3);margin-top:2px">${sub}</div></div>
   </div>
+
   <div class="lbl" style="margin-bottom:8px">TONE</div>
   <div class="tone-grid" id="tone-chips">
-    ${['emotional','funny','spiritual','professional','simple'].map(t=>`<div class="tone-chip${t===wishTone?' active':''}" onclick="setWishTone('${t}',this)">${{emotional:'💖 Emotional',funny:'😄 Funny',spiritual:'🙏 Spiritual',professional:'💼 Professional',simple:'✉️ Simple'}[t]}</div>`).join('')}
+    ${['emotional','funny','spiritual','professional','simple','telugu','hindi'].map(t=>`<div class="tone-chip${t===wishTone?' active':''}" onclick="setWishTone('${t}',this)">${{emotional:'💖 Emotional',funny:'😄 Funny',spiritual:'🙏 Spiritual',professional:'💼 Professional',simple:'✉️ Simple',telugu:'🇮🇳 Telugu',hindi:'🇮🇳 Hindi'}[t]}</div>`).join('')}
   </div>
-  <div style="margin-bottom:12px">
-    <div class="lbl" style="margin-bottom:6px">CUSTOM PROMPT <span style="color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0;font-size:.65rem">(optional, describe what you want)</span></div>
-    <div style="display:flex;gap:7px;align-items:center">
-      <input id="wish-custom-prompt" type="text" placeholder='e.g. "mention her cooking, keep it short"' 
-        style="flex:1;padding:9px 12px;border-radius:var(--r);background:var(--sf2);border:1px solid var(--bd);color:var(--t1);font-family:'Inter',sans-serif;font-size:.8rem;outline:none;transition:border-color .15s"
-        onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--bd)'"
-        onkeydown="if(event.key==='Enter')regenWishAI()"/>
+
+  <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center">
+    <div class="lbl" style="margin-bottom:0;white-space:nowrap">LENGTH</div>
+    <div style="display:flex;background:var(--sf2);border:1px solid var(--bd);border-radius:99px;padding:3px;gap:2px" id="len-seg">
+      ${['short','medium','long'].map(l=>`<button onclick="setWishLength('${l}')" id="wlen-${l}" style="padding:4px 12px;border-radius:99px;border:none;font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .14s;background:${wishLength===l?'var(--blue)':'transparent'};color:${wishLength===l?'#fff':'var(--t2)'}">${l[0].toUpperCase()+l.slice(1)}</button>`).join('')}
     </div>
   </div>
+
+  <div style="margin-bottom:12px">
+    <div class="lbl" style="margin-bottom:6px">CUSTOM PROMPT <span style="color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0;font-size:.65rem">(optional, describe what you want)</span></div>
+    <input id="wish-custom-prompt" type="text" placeholder='e.g. "mention we studied together, keep it short"'
+      style="width:100%;padding:9px 12px;border-radius:var(--r);background:var(--sf2);border:1px solid var(--bd);color:var(--t1);font-family:'Inter',sans-serif;font-size:.8rem;outline:none;transition:border-color .15s"
+      onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--bd)'"
+      onkeydown="if(event.key==='Enter')regenWishAI()"/>
+  </div>
+
+  ${histHtml}
+
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
     <div class="lbl">MESSAGE</div>
     <div style="display:flex;gap:7px">
       <button id="regen-btn" onclick="regenWishAI()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;border:1px solid var(--blue-bd);background:var(--blue-bg);color:var(--blue);font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.75"/></svg>
-        Regenerate
+        AI Generate
       </button>
-      <button onclick="copyWish()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s" onmouseenter="this.style.background='var(--sf3)'" onmouseleave="this.style.background='var(--sf2)'">
+      <button onclick="copyWish()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
         Copy
       </button>
@@ -1694,7 +1718,6 @@ function wishSheetHtml(){
     Send on WhatsApp
   </button>`;
 }
-
 function generateWishText(p,type,tone){
   // Fallback template (used while AI loads)
   const tmpl=(D.templates[type]||DEFAULT_TEMPLATES[type])[tone]||DEFAULT_TEMPLATES[type].simple;
@@ -1730,9 +1753,13 @@ async function regenWishAI() {
   const customHint = (document.getElementById('wish-custom-prompt')?.value||'').trim();
   const customPart = customHint ? `Extra instructions from the sender: ${customHint}.` : '';
 
+  const lengthDesc = {short:'1 sentence only',medium:'2-3 sentences',long:'4-5 sentences, more detailed'}[wishLength]||'2-3 sentences';
+  const langNote = (wishTone==='telugu') ? 'Write in Telugu script.' : (wishTone==='hindi') ? 'Write in Hindi script.' : '';
+  const toneDescFinal = (wishTone==='telugu'||wishTone==='hindi') ? 'warm and emotional' : toneDesc;
+
   const prompt = wishType === 'birthday'
-    ? `Write a WhatsApp birthday wish for ${firstName} (my ${relation})${age ? `, turning ${age}` : ''}. Tone: ${toneDesc}. ${customPart} Rules: Output ONLY the wish message itself. No intro, no sign-off, no follow-up questions — just the wish. 2-3 sentences. No hashtags. No "Dear" prefix.`
-    : `Write a WhatsApp anniversary wish for ${firstName} (my ${relation})${yrs ? `, celebrating ${yrs} years together` : ''}. Tone: ${toneDesc}. ${customPart} Rules: Output ONLY the wish message itself. No intro, no sign-off, no follow-up questions — just the wish. 2-3 sentences. No hashtags.`;
+    ? `Write a WhatsApp birthday wish for ${firstName} (my ${relation})${age ? `, turning ${age}` : ''}. Tone: ${toneDescFinal}. Length: ${lengthDesc}. ${langNote} ${customPart} Rules: Output ONLY the wish message itself. No intro, no sign-off, no follow-up questions. No hashtags. No "Dear" prefix.`
+    : `Write a WhatsApp anniversary wish for ${firstName} (my ${relation})${yrs ? `, celebrating ${yrs} years together` : ''}. Tone: ${toneDescFinal}. Length: ${lengthDesc}. ${langNote} ${customPart} Rules: Output ONLY the wish message itself. No intro, no sign-off, no follow-up questions. No hashtags.`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1767,11 +1794,21 @@ function setWishTone(tone, el) {
   wishTone = tone;
   document.querySelectorAll('.tone-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
+  // Save tone preference
+  localStorage.setItem('eb-last-tone', tone);
   const ta = document.getElementById('wish-ta');
   if (ta && wishPerson) {
-    // Show template — user taps Regenerate if they want AI
     ta.value = generateWishText(wishPerson, wishType, tone);
   }
+}
+function setWishLength(len) {
+  wishLength = len;
+  ['short','medium','long'].forEach(l => {
+    const b = document.getElementById('wlen-'+l);
+    if (!b) return;
+    b.style.background = l===len ? 'var(--blue)' : 'transparent';
+    b.style.color = l===len ? '#fff' : 'var(--t2)';
+  });
 }
 // regenWish removed
 
@@ -1908,6 +1945,12 @@ function sendWish(){
   const p=wishPerson;if(!p)return;
   const msg=(document.getElementById('wish-ta')||{}).value?.trim();
   if(!msg){toast('Write a message first');return;}
+  // Save to wish history
+  const histKey='eb-wish-hist-'+p.id+'-'+wishType;
+  const hist=JSON.parse(localStorage.getItem(histKey)||'[]');
+  const entry={msg,date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})};
+  hist.unshift(entry);
+  localStorage.setItem(histKey,JSON.stringify(hist.slice(0,3))); // keep last 3
   const num=p.phone?(p.cc||'91')+p.phone:'';
   const url=num?`https://wa.me/${num}?text=${encodeURIComponent(msg)}`:`https://wa.me/?text=${encodeURIComponent(msg)}`;
   window.open(url,'_blank');
