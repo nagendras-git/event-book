@@ -214,6 +214,7 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .cel-banner-photo{width:100%;height:260px;position:relative;overflow:hidden;}
 .cel-banner-photo-inner{position:absolute;inset:0;background-size:cover;background-position:center center;transition:transform .5s ease,filter .4s ease;}
 .cel-banner.open .cel-banner-photo-inner{filter:brightness(.4);transform:scale(1.04);}
+.cel-banner.open .cel-greeting{opacity:0;transition:opacity .2s;}
 .cel-initials{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5rem;font-weight:800;color:rgba(255,255,255,.1);font-family:'Inter',sans-serif;user-select:none;letter-spacing:-.05em;}
 .cel-photo-scrim{position:absolute;bottom:0;left:0;right:0;height:130px;background:linear-gradient(to top,rgba(0,0,0,.8) 0%,transparent 100%);pointer-events:none;z-index:1;}
 .cel-photo-info{position:absolute;bottom:0;left:0;right:0;padding:14px 14px 12px;z-index:2;}
@@ -240,7 +241,9 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .cel-reveal-close:active{background:rgba(255,255,255,.22);transform:scale(.9);}
 /* Balloon layer */
 .cel-balloons{position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden;}
-.cel-balloon{position:absolute;bottom:-60px;font-size:1.5rem;opacity:0;animation:none;}
+.cel-balloon{position:absolute;bottom:-60px;font-size:1.6rem;opacity:0;animation:none;}
+.cel-greeting{position:absolute;top:18px;left:0;right:0;text-align:center;font-size:1.05rem;font-weight:800;color:rgba(255,255,255,0);letter-spacing:.01em;pointer-events:none;z-index:5;text-shadow:0 2px 12px rgba(0,0,0,.4);padding:0 16px;animation:greetFadeIn .6s ease .3s forwards;}
+@keyframes greetFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;color:rgba(255,255,255,.92);transform:none}}
 .cel-balloon.go{animation:celFloat var(--dur,3s) ease-out var(--delay,0s) forwards;}
 @keyframes celFloat{0%{bottom:-60px;opacity:1;transform:translateX(0) rotate(0deg)}40%{opacity:1;transform:translateX(var(--sway,15px)) rotate(var(--rot,8deg))}70%{opacity:.8;transform:translateX(calc(var(--sway,15px)*-.4)) rotate(calc(var(--rot,8deg)*-.5))}100%{bottom:115%;opacity:0;transform:translateX(calc(var(--sway,15px)*.2)) rotate(0deg)}}
 /* Confetti burst */
@@ -860,19 +863,37 @@ function renderHome(){
       const avBg=avColor(p.name);
       const daysLabel=days===0?'Today ✨':`In ${days} day${days>1?'s':''}`;
       const eventLabel=isBd?`🎂 Birthday${days===0?' today':''}`:`💍 Anniversary${days===0?' today':''}`;
-      const gradMap={birthday:'linear-gradient(160deg,#1e3a8a,#312e81)',anniversary:'linear-gradient(160deg,#064e3b,#0d9488)'};
+      // Rich event-specific gradients — birthday warm/festive, anniversary romantic/warm
+      const gradMap={
+        birthday: isBd && days===0
+          ? 'linear-gradient(145deg,#7c2d12 0%,#c2410c 40%,#f97316 100%)' // today: warm orange fire
+          : 'linear-gradient(145deg,#1e1b4b 0%,#3730a3 50%,#6d28d9 100%)', // upcoming: deep violet
+        anniversary: !isBd && days===0
+          ? 'linear-gradient(145deg,#831843 0%,#be185d 45%,#f43f5e 100%)' // today: romantic rose
+          : 'linear-gradient(145deg,#064e3b 0%,#065f46 50%,#0d9488 100%)', // upcoming: deep teal
+      };
       const bgStyle=p.photo
         ?`background-image:url('${p.photo}');background-size:cover;background-position:center center;`
         :`background:${gradMap[ev.type]||gradMap.birthday};`;
       const dotsHtml=bannerCards.length>1
         ?`<div class="cel-dots-bar">${bannerCards.map((_,di)=>`<div class="cel-dot${di===0?' on':''}" id="cdot-${di}"></div>`).join('')}</div>`
         :'';
-      const BALLOONS=[
-        {e:'🎈',x:12,sw:'-18px',d:.1,t:2.8},{e:'🎊',x:55,sw:'22px',d:.4,t:3.1},
-        {e:'🎉',x:30,sw:'-12px',d:.7,t:2.6},{e:'🎈',x:78,sw:'15px',d:.2,t:3.3},
-        {e:'🎊',x:88,sw:'-20px',d:.9,t:2.9},{e:'🎉',x:8,sw:'10px',d:.5,t:3.0},
-        {e:'🎈',x:50,sw:'-25px',d:.3,t:2.7},{e:'🎊',x:66,sw:'20px',d:.8,t:3.2},
+      // Event-specific decorations
+      const bdBalloons=[
+        {e:'🎈',x:8,sw:'-18px',d:.1,t:2.8},{e:'🎈',x:22,sw:'14px',d:.5,t:3.1},
+        {e:'🎈',x:42,sw:'-12px',d:.3,t:2.7},{e:'🎈',x:62,sw:'18px',d:.2,t:3.0},
+        {e:'🎈',x:80,sw:'-15px',d:.7,t:2.9},{e:'🎈',x:92,sw:'10px',d:.4,t:3.2},
+        {e:'🎊',x:35,sw:'-20px',d:.6,t:2.6},{e:'🎉',x:72,sw:'22px',d:.8,t:3.3},
       ];
+      const annBalloons=[
+        {e:'🎈',x:8,sw:'-14px',d:.2,t:2.9},{e:'🎈',x:25,sw:'16px',d:.5,t:3.1},
+        {e:'🎈',x:50,sw:'-10px',d:.1,t:2.8},{e:'🎈',x:72,sw:'12px',d:.4,t:3.0},
+        {e:'🎈',x:88,sw:'-16px',d:.7,t:3.2},{e:'💕',x:18,sw:'8px',d:.3,t:2.7},
+        {e:'💕',x:58,sw:'-12px',d:.6,t:3.1},{e:'💍',x:38,sw:'14px',d:.9,t:2.9},
+      ];
+      const BALLOONS=isBd?bdBalloons:annBalloons;
+      const firstName=p.nick||p.name.split(' ')[0];
+      const greetingText=isBd?`Happy Birthday ${firstName}!`:`Happy Anniversary ${firstName}!`;
       const balloonMarkup=BALLOONS.map(b=>`<div class="cel-balloon" style="left:${b.x}%;--sway:${b.sw};--dur:${b.t}s;--delay:${b.d}s;--rot:${b.r||'8deg'}">${b.e}</div>`).join('');
       const CONF_COLORS=['#fbbf24','#60a5fa','#34d399','#f87171','#a78bfa','#fb923c','#fff'];
       const confMarkup=Array.from({length:22},(_,i)=>{
@@ -893,6 +914,7 @@ function renderHome(){
           </div>
           <div class="cel-photo-scrim"></div>
           <div class="cel-balloons" id="cel-bl-${i}">${balloonMarkup}</div>
+          <div class="cel-greeting" id="cel-gr-${i}">${greetingText}</div>
           <div class="cel-confetti" id="cel-cf-${i}">${confMarkup}</div>
           <div class="cel-photo-info">
             <div class="cel-days-chip">${eventLabel} · ${daysLabel}</div>
