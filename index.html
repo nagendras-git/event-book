@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -76,6 +75,7 @@ body.locked{overflow:hidden;position:fixed;width:100%;touch-action:none;}
 .lbl{font-size:.62rem;font-weight:700;color:var(--t3);letter-spacing:.4px;text-transform:uppercase}
 .pg{display:none}.pg.active{display:block;animation:pgIn .22s var(--ease) both}
 @keyframes pgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .wrap{width:100%;max-width:480px;margin:0 auto;padding:12px 14px 0}
 .pg.active{padding-top:var(--hdr-h)}
 
@@ -720,6 +720,9 @@ let _photoData=null;
 // ══ STORAGE ══
 function load(){try{D=JSON.parse(localStorage.getItem(LS))||{};}catch(e){D={};}
   if(!D.people)D.people=[];
+  // Deduplicate by ID (safety net)
+  const seen=new Set();
+  D.people=D.people.filter(p=>{if(seen.has(p.id))return false;seen.add(p.id);return true;});
   if(!D.templates)D.templates=JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
 }
 function save(){localStorage.setItem(LS,JSON.stringify(D));}
@@ -939,7 +942,7 @@ function renderHome(){
       const age=isBd?getAgeNextBday(p.dob):null;
       const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
       const sub=isBd?(age?`Turning ${age} today 🎉`:'Birthday today 🎉'):(yrs?`${yrs} years together 💑`:'Anniversary today 💍');
-      html+=`<div class="today-item">
+      html+=`<div class="today-item" onclick="openPersonDetail('${p.id}')" style="cursor:pointer">
         ${avHtml(p,40,11)}
         <div class="today-info">
           <div class="today-name">${p.name}</div>
@@ -966,7 +969,7 @@ function renderHome(){
       const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
       const sub=isBd?(age?`Turns ${age} · ${fmtFull(p.dob)}`:`Birthday · ${fmtFull(p.dob)}`):(yrs?`${yrs} yrs · ${fmtFull(p.anniv)}`:`Anniversary · ${fmtFull(p.anniv)}`);
       const dayColor=days===1?'var(--amber)':'var(--blue)';
-      html+=`<div class="up-item">
+      html+=`<div class="up-item" onclick="openPersonDetail('${p.id}')" style="cursor:pointer">
         ${avHtml(p,34,9)}
         <div class="up-body">
           <div class="up-name">${p.name} ${isBd?'🎂':'💍'}</div>
@@ -977,11 +980,6 @@ function renderHome(){
     });
     html+=`</div>`;
   }
-
-  html+=`<div class="addrow" onclick="openSheet('add-person')">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    Add Person
-  </div>`;
 
   el.innerHTML=html;
   setCelState(bannerCards.length);
@@ -1184,7 +1182,7 @@ function renderCalendar(){
     const isBd=e.type==='birthday';
     const col=isBd?'var(--green)':'var(--amber)';
     const age=isBd?getAgeInMonth(e.p.dob,y,m):getYearsInMonth(e.p.anniv,y,m);
-    return`<div class="ritem">
+    return`<div class="ritem" onclick="openPersonDetail('${e.p.id}')" style="cursor:pointer">
       <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;margin:0 2px"></div>
       ${avHtml(e.p,34,9)}
       <div class="rbody">
@@ -1367,7 +1365,27 @@ function openSheet(type,arg){
   const shTitle=document.getElementById('sh-title');
   const shBody=document.getElementById('sh-body');
 
-  if(type==='add-person'){
+  if(type==='person-detail'){
+    // arg = person id
+    const p=D.people.find(x=>x.id===arg);
+    if(!p)return;
+    const panel=buildExpandedPanel(p);
+    shTitle.textContent=p.name;
+    shBody.innerHTML=`
+      <div style="display:flex;align-items:center;gap:12px;padding:4px 0 16px;border-bottom:1px solid var(--bd2);margin-bottom:16px">
+        ${avHtml(p,48,12)}
+        <div style="flex:1;min-width:0">
+          <div style="font-size:1rem;font-weight:800;color:var(--t1)">${p.name}${p.fav?' ⭐':''}</div>
+          <div style="font-size:.74rem;color:var(--t3);margin-top:2px">${[p.relation,p.category].filter(Boolean).join(' · ')}</div>
+        </div>
+
+      </div>
+      ${panel}
+    `;
+    showSheet();
+    return;
+  }
+  else if(type==='add-person'){
     const p=arg?D.people.find(x=>x.id===arg):null;
     editingPersonId=p?p.id:null;
     shTitle.textContent=p?'Edit Person':'Add Person';
@@ -1430,7 +1448,12 @@ function addPersonFormHtml(p){
         <option value="61" ${p&&p.cc==='61'?'selected':''}>🇦🇺 +61</option>
       </select>
       <input class="fi" type="tel" id="f-phone" placeholder="9876543210" value="${p?p.phone||'':''}" style="flex:1"/>
+      <button type="button" id="contacts-picker-btn" onclick="pickFromContacts()" style="flex-shrink:0;padding:0 12px;height:42px;border-radius:var(--r);background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .14s;" title="Pick from contacts">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Contacts
+      </button>
     </div>
+    <div id="contacts-picker-note" style="font-size:.7rem;color:var(--t3);margin-top:4px;display:none;">Tap "Contacts" to pick a number from your phone (Android only)</div>
   </div>
   <div class="fg">
     <label class="fl">PHOTO</label>
@@ -1908,6 +1931,143 @@ function closeConfirm(){document.getElementById('cov').classList.remove('open');
 
 // ══ TOAST ══
 let toastT;
+// ── Open Person Detail Sheet ──
+function openPersonDetail(pid) {
+  openSheet('person-detail', pid);
+}
+
+// ── Contacts Picker (Android Chrome only) ──
+async function pickFromContacts() {
+  const note = document.getElementById('contacts-picker-note');
+  if (!('contacts' in navigator && 'ContactsManager' in window)) {
+    if (note) { note.style.display = 'block'; }
+    toast('Contacts picker not supported on this browser');
+    return;
+  }
+  try {
+    const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+    if (!contacts || contacts.length === 0) return;
+    const contact = contacts[0];
+    // Fill name if empty
+    const nameEl = document.getElementById('f-name');
+    if (nameEl && !nameEl.value && contact.name && contact.name[0]) {
+      nameEl.value = contact.name[0];
+    }
+    // Fill phone — strip non-digits, remove leading country code if starts with +91
+    if (contact.tel && contact.tel[0]) {
+      let num = contact.tel[0].replace(/\s|-/g, '');
+      // If number starts with +91 set cc to IN and strip it
+      if (num.startsWith('+91')) {
+        const ccEl = document.getElementById('f-cc');
+        if (ccEl) ccEl.value = '91';
+        num = num.slice(3);
+      } else if (num.startsWith('+')) {
+        // Try to match known country codes
+        num = num.replace(/^\+/, '');
+      }
+      const phoneEl = document.getElementById('f-phone');
+      if (phoneEl) phoneEl.value = num.replace(/\D/g, '');
+    }
+    toast('Contact filled ✓');
+  } catch(e) {
+    toast('Could not access contacts');
+  }
+}
+
+// ── Web Push Notifications ──
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission === 'denied') return false;
+  const result = await Notification.requestPermission();
+  return result === 'granted';
+}
+
+function checkTodayEvents() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const now = new Date();
+  const todayM = now.getMonth() + 1;
+  const todayD = now.getDate();
+  const D = JSON.parse(localStorage.getItem('eb-data') || '{"people":[]}');
+  const todayEvents = [];
+  (D.people || []).forEach(p => {
+    const name = p.nick || p.name;
+    if (p.dob) {
+      const d = new Date(p.dob);
+      if (!isNaN(d) && d.getMonth() + 1 === todayM && d.getDate() === todayD) {
+        const age = now.getFullYear() - d.getFullYear();
+        todayEvents.push(`🎂 ${name} turns ${age} today!`);
+      }
+    }
+    if (p.anniv) {
+      const d = new Date(p.anniv);
+      if (!isNaN(d) && d.getMonth() + 1 === todayM && d.getDate() === todayD) {
+        const yrs = now.getFullYear() - d.getFullYear();
+        todayEvents.push(`💍 ${name} — ${yrs} year anniversary today!`);
+      }
+    }
+  });
+  if (todayEvents.length > 0) {
+    const lastNotified = localStorage.getItem('eb-notified-date');
+    const todayStr = `${now.getFullYear()}-${todayM}-${todayD}`;
+    if (lastNotified === todayStr) return; // Already notified today
+    localStorage.setItem('eb-notified-date', todayStr);
+    todayEvents.forEach((msg, i) => {
+      setTimeout(() => {
+        new Notification('Event Book 🎉', {
+          body: msg,
+          icon: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%231d4ed8"/><text x="32" y="44" font-size="32" text-anchor="middle">🎂</text></svg>',
+          badge: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%231d4ed8"/></svg>',
+          tag: `eb-${i}`,
+        });
+      }, i * 1500);
+    });
+  }
+}
+
+// Show notification opt-in banner if not yet asked
+function maybeAskNotificationPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'default') {
+    if (Notification.permission === 'granted') checkTodayEvents();
+    return;
+  }
+  // Only ask once
+  if (localStorage.getItem('eb-notif-asked')) return;
+  localStorage.setItem('eb-notif-asked', '1');
+  // Show a gentle in-app prompt after 2s
+  setTimeout(() => {
+    const banner = document.createElement('div');
+    banner.id = 'notif-banner';
+    banner.style.cssText = `
+      position:fixed;bottom:calc(72px + env(safe-area-inset-bottom,0px));left:50%;
+      transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;
+      background:#1e293b;border:1px solid #334155;border-radius:16px;
+      padding:14px 16px;display:flex;align-items:center;gap:12px;
+      z-index:999;box-shadow:0 8px 32px rgba(0,0,0,.4);
+      animation:slideUp .3s cubic-bezier(.16,1,.3,1) both;
+    `;
+    banner.innerHTML = `
+      <div style="font-size:1.4rem;flex-shrink:0">🔔</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.84rem;font-weight:700;color:#f1f5f9">Get birthday reminders</div>
+        <div style="font-size:.74rem;color:#94a3b8;margin-top:2px">Notify me when someone's birthday is today</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0">
+        <button onclick="document.getElementById('notif-banner').remove()" 
+          style="padding:6px 12px;border-radius:8px;background:transparent;border:1px solid #475569;color:#94a3b8;font-size:.74rem;font-weight:600;cursor:pointer;font-family:inherit">
+          Not now
+        </button>
+        <button onclick="requestNotificationPermission().then(ok=>{if(ok){checkTodayEvents();toast('Notifications on ✓');}else{toast('Permission denied');}document.getElementById('notif-banner').remove();this.remove();})" 
+          style="padding:6px 12px;border-radius:8px;background:#3b82f6;border:none;color:#fff;font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit">
+          Allow
+        </button>
+      </div>
+    `;
+    document.body.appendChild(banner);
+  }, 2000);
+}
+
 function toast(msg){
   const el=document.getElementById('toast');
   el.textContent=msg;el.classList.add('show');
@@ -2053,6 +2213,8 @@ function init(){
   const th=localStorage.getItem(LS_THEME)||'dark';
   setTheme(th);
   renderHome();
+  // Ask for notification permission + check today's events
+  setTimeout(maybeAskNotificationPermission, 1000);
   if(D.people.length===0)setTimeout(()=>toast('Welcome! Tap + to add your first person'),800);
   const savedFs=parseInt(localStorage.getItem('eb_fs'))||16;
   if(savedFs!==16){document.documentElement.style.fontSize=savedFs+'px';}
