@@ -1787,13 +1787,22 @@ async function regenWishAI() {
         'anthropic-dangerous-direct-browser-access': 'true',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 200,
         system: "You write WhatsApp wish messages sent by a real person to their friend or family. Write naturally like a human: warm, genuine, conversational. Never use em-dashes, bullet points, asterisks, or any formatting. No cliches like 'may your journey' or 'wishing you all the best'. No sign-offs. No questions. No offers to revise. Output ONLY the message text, nothing else.",
         messages: [{ role: 'user', content: prompt }]
       })
     });
     const data = await res.json();
+    // Show actual API error on screen for debugging
+    if (!res.ok) {
+      const errMsg = data?.error?.message || `API error ${res.status}`;
+      ta.value = generateWishText(p, wishType, wishTone);
+      ta.style.opacity = '1';
+      toast('Error: ' + errMsg.substring(0, 60));
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+      return;
+    }
     const msg = data.content?.[0]?.text?.trim();
     if (msg) {
       ta.value = msg;
@@ -1801,12 +1810,12 @@ async function regenWishAI() {
     } else {
       ta.value = generateWishText(p, wishType, wishTone);
       ta.style.opacity = '1';
-      toast('Using template — try again');
+      toast('Empty response — try again');
     }
   } catch(e) {
     ta.value = generateWishText(p, wishType, wishTone);
     ta.style.opacity = '1';
-    toast('Offline — using template');
+    toast('Network error: ' + (e.message||'unknown').substring(0,50));
   }
   if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
 }
