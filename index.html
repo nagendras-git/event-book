@@ -1639,6 +1639,7 @@ function openWishSheet(pid,type){
   if(!wishPerson)return;
   wishType=type;wishTone='emotional';
   openSheet('wish');
+  // Show template immediately — user can tap Regenerate for AI
 }
 function openWishSheetAuto(pid){
   const p=D.people.find(x=>x.id===pid);if(!p)return;
@@ -1665,12 +1666,27 @@ function wishSheetHtml(){
   <div class="tone-grid" id="tone-chips">
     ${['emotional','funny','spiritual','professional','simple'].map(t=>`<div class="tone-chip${t===wishTone?' active':''}" onclick="setWishTone('${t}',this)">${{emotional:'💖 Emotional',funny:'😄 Funny',spiritual:'🙏 Spiritual',professional:'💼 Professional',simple:'✉️ Simple'}[t]}</div>`).join('')}
   </div>
+  <div style="margin-bottom:12px">
+    <div class="lbl" style="margin-bottom:6px">CUSTOM PROMPT <span style="color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0;font-size:.65rem">(optional, describe what you want)</span></div>
+    <div style="display:flex;gap:7px;align-items:center">
+      <input id="wish-custom-prompt" type="text" placeholder='e.g. "mention her cooking, keep it short"' 
+        style="flex:1;padding:9px 12px;border-radius:var(--r);background:var(--sf2);border:1px solid var(--bd);color:var(--t1);font-family:'Inter',sans-serif;font-size:.8rem;outline:none;transition:border-color .15s"
+        onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--bd)'"
+        onkeydown="if(event.key==='Enter')regenWishAI()"/>
+    </div>
+  </div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
     <div class="lbl">MESSAGE</div>
-    <button onclick="copyWish()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s" onmouseenter="this.style.background='var(--sf3)'" onmouseleave="this.style.background='var(--sf2)'">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-      Copy
-    </button>
+    <div style="display:flex;gap:7px">
+      <button id="regen-btn" onclick="regenWishAI()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;border:1px solid var(--blue-bd);background:var(--blue-bg);color:var(--blue);font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.75"/></svg>
+        Regenerate
+      </button>
+      <button onclick="copyWish()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--sf2);color:var(--t2);font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s" onmouseenter="this.style.background='var(--sf3)'" onmouseleave="this.style.background='var(--sf2)'">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copy
+      </button>
+    </div>
   </div>
   <textarea class="wish-ta" id="wish-ta">${generateWishText(p,wishType,wishTone)}</textarea>
   <button class="wa-send-btn" onclick="sendWish()">
@@ -1680,17 +1696,82 @@ function wishSheetHtml(){
 }
 
 function generateWishText(p,type,tone){
+  // Fallback template (used while AI loads)
   const tmpl=(D.templates[type]||DEFAULT_TEMPLATES[type])[tone]||DEFAULT_TEMPLATES[type].simple;
   const age=type==='birthday'?getAgeNextBday(p.dob):null;
   const yrs=type==='anniversary'?getYearsNextAnniv(p.anniv):null;
   return tmpl.replace(/{name}/g,p.nick||p.name.split(' ')[0]).replace(/{age}/g,age||'').replace(/{years}/g,yrs||'');
 }
-function setWishTone(tone,el){
-  wishTone=tone;
-  document.querySelectorAll('.tone-chip').forEach(c=>c.classList.remove('active'));
+
+async function regenWishAI() {
+  const p = wishPerson;
+  if (!p) return;
+  const ta = document.getElementById('wish-ta');
+  const btn = document.getElementById('regen-btn');
+  if (!ta) return;
+
+  // Show loading state
+  ta.value = '✨ Generating personalised message...';
+  ta.style.opacity = '0.6';
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
+
+  const firstName = p.nick || p.name.split(' ')[0];
+  const age = wishType === 'birthday' ? getAgeNextBday(p.dob) : null;
+  const yrs = wishType === 'anniversary' ? getYearsNextAnniv(p.anniv) : null;
+  const relation = p.relation || 'friend';
+  const toneDesc = {
+    emotional: 'warm, heartfelt and emotional — from the heart',
+    funny: 'funny and playful with a light joke or pun',
+    spiritual: 'spiritual and blessed, with a prayer or divine blessing',
+    professional: 'professional and formal yet warm',
+    simple: 'simple, short and sincere — 1-2 lines only'
+  }[wishTone] || 'warm and friendly';
+
+  const customHint = (document.getElementById('wish-custom-prompt')?.value||'').trim();
+  const customPart = customHint ? `Extra instructions from the sender: ${customHint}.` : '';
+
+  const prompt = wishType === 'birthday'
+    ? `Write a WhatsApp birthday wish for ${firstName} (my ${relation})${age ? `, turning ${age}` : ''}. Tone: ${toneDesc}. ${customPart} Rules: Output ONLY the wish message itself. No intro, no sign-off, no follow-up questions — just the wish. 2-3 sentences. No hashtags. No "Dear" prefix.`
+    : `Write a WhatsApp anniversary wish for ${firstName} (my ${relation})${yrs ? `, celebrating ${yrs} years together` : ''}. Tone: ${toneDesc}. ${customPart} Rules: Output ONLY the wish message itself. No intro, no sign-off, no follow-up questions — just the wish. 2-3 sentences. No hashtags.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 200,
+        system: "You write WhatsApp wish messages sent by a real person to their friend or family. Write naturally like a human: warm, genuine, conversational. Never use em-dashes, bullet points, asterisks, or any formatting. No cliches like 'may your journey' or 'wishing you all the best'. No sign-offs. No questions. No offers to revise. Output ONLY the message text, nothing else.",
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const msg = data.content?.[0]?.text?.trim();
+    if (msg) {
+      ta.value = msg;
+      ta.style.opacity = '1';
+    } else {
+      ta.value = generateWishText(p, wishType, wishTone);
+      ta.style.opacity = '1';
+      toast('Using template — try again');
+    }
+  } catch(e) {
+    ta.value = generateWishText(p, wishType, wishTone);
+    ta.style.opacity = '1';
+    toast('Offline — using template');
+  }
+  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+}
+
+function setWishTone(tone, el) {
+  wishTone = tone;
+  document.querySelectorAll('.tone-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
-  const ta=document.getElementById('wish-ta');
-  if(ta&&wishPerson)ta.value=generateWishText(wishPerson,wishType,tone);
+  const ta = document.getElementById('wish-ta');
+  if (ta && wishPerson) {
+    // Show template — user taps Regenerate if they want AI
+    ta.value = generateWishText(wishPerson, wishType, tone);
+  }
 }
 // regenWish removed
 
