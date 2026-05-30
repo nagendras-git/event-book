@@ -975,7 +975,7 @@ function renderHome(){
       const isBd=type==='birthday';
       const age=isBd?getAgeNextBday(p.dob):null;
       const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
-      const sub=isBd?(age?`Turns ${age} today 🎉`:'Birthday today 🎉'):(yrs?`${yrs} yrs together 💑`:'Anniversary today 💍');
+      const sub=isBd?(age?`Turning ${age} today 🎉`:'Birthday today 🎉'):(yrs?`${yrs} yrs together 💑`:'Anniversary today 💍');
       html+=`<div class="up-item" onclick="openPersonDetail('${p.id}')" style="cursor:pointer">
         ${avHtml(p,34,9)}
         <div class="up-body">
@@ -999,7 +999,7 @@ function renderHome(){
       const isBd=type==='birthday';
       const age=isBd?getAgeNextBday(p.dob):null;
       const yrs=!isBd?getYearsNextAnniv(p.anniv):null;
-      const sub=isBd?(age?`Turns ${age} · ${fmtFull(p.dob)}`:`Birthday · ${fmtFull(p.dob)}`):(yrs?`${yrs} yrs · ${fmtFull(p.anniv)}`:`Anniversary · ${fmtFull(p.anniv)}`);
+      const sub=isBd?(age?`Turning ${age} · ${fmtFull(p.dob)}`:`Birthday · ${fmtFull(p.dob)}`):(yrs?`${yrs} yrs · ${fmtFull(p.anniv)}`:`Anniversary · ${fmtFull(p.anniv)}`);
       const dayColor=days===1?'var(--amber)':'var(--blue)';
       html+=`<div class="up-item" onclick="openPersonDetail('${p.id}')" style="cursor:pointer">
         ${avHtml(p,34,9)}
@@ -1143,7 +1143,10 @@ function personRowHtml(p){
   const bdDays=p.dob?daysUntil(p.dob):null;
   const anDays=p.anniv?daysUntil(p.anniv):null;
   const nextDays=Math.min(...[bdDays,anDays].filter(d=>d!==null).concat([9999]));
-  const ageBadge=age!==null?`<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${age}y</span>`:'';
+  const curAge = getAge(p.dob);
+  const curAnYrs = p.anniv ? getAge(p.anniv) : null;
+  const ageBadge = curAge !== null ? `<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${curAge}y</span>` : '';
+  const anBadge = (curAnYrs !== null && curAnYrs >= 0) ? `<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${curAnYrs}y together</span>` : '';
   const nextLabel=nextDays===0?`<span style="font-size:.6rem;font-weight:700;background:var(--gbg);color:var(--green);border:1px solid var(--gbd);padding:1px 6px;border-radius:99px">Today!</span>`:nextDays<=7?`<span style="font-size:.6rem;font-weight:700;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25);padding:1px 6px;border-radius:99px">${nextDays}d</span>`:'';
   const bdLine=p.dob?`🎂 ${fmtShort(p.dob)}`:'';
   const anLine=p.anniv?`💍 ${fmtShort(p.anniv)}`:'';
@@ -1151,7 +1154,7 @@ function personRowHtml(p){
   const subParts=[bdLine,anLine,relLine].filter(Boolean);
   return`<div class="ritem" style="flex-direction:column;align-items:stretch;padding:0;cursor:default">
     <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer" onclick="togglePersonActions('pa-${p.id}')">
-      ${avHtml(p,36,10)}<div class="rbody"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span class="rtitle">${p.name}${p.fav?' ⭐':''}</span>${ageBadge}${nextLabel}</div><div class="rsub">${subParts.join(' · ')||'No dates added'}</div></div>
+      ${avHtml(p,36,10)}<div class="rbody"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span class="rtitle">${p.name}${p.fav?' ⭐':''}</span>${ageBadge}${anBadge}${nextLabel}</div><div class="rsub">${subParts.join(' · ')||'No dates added'}</div></div>
       <svg id="pc-${p.id}" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;transition:transform .25s"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
     <div id="pa-${p.id}" style="display:none">${buildExpandedPanel(p)}</div>
@@ -1164,7 +1167,10 @@ function flatPersonRowHtml(p){
   const bdDays=p.dob?daysUntil(p.dob):null;
   const anDays=p.anniv?daysUntil(p.anniv):null;
   const nextDays=Math.min(...[bdDays,anDays].filter(d=>d!==null).concat([9999]));
-  const ageBadge=age!==null?`<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${age}y</span>`:'';
+  const curAge = getAge(p.dob);
+  const curAnYrs = p.anniv ? getAge(p.anniv) : null;
+  const ageBadge = curAge !== null ? `<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${curAge}y</span>` : '';
+  const anBadge = (curAnYrs !== null && curAnYrs >= 0) ? `<span style="font-size:.6rem;font-weight:700;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);padding:1px 6px;border-radius:99px">${curAnYrs}y together</span>` : '';
   const nextLabel=nextDays===0?`<span style="font-size:.6rem;font-weight:700;background:var(--gbg);color:var(--green);border:1px solid var(--gbd);padding:1px 6px;border-radius:99px">Today!</span>`:nextDays<=7?`<span style="font-size:.6rem;font-weight:700;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25);padding:1px 6px;border-radius:99px">${nextDays}d</span>`:'';
   const bdLine=p.dob?`🎂 ${fmtShort(p.dob)}`:'';
   const anLine=p.anniv?`💍 ${fmtShort(p.anniv)}`:'';
@@ -1172,7 +1178,7 @@ function flatPersonRowHtml(p){
   const subParts=[bdLine,anLine,p.relation].filter(Boolean);
   return`<div class="ritem" style="flex-direction:column;align-items:stretch;padding:0;cursor:default">
     <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer" onclick="togglePersonActions('pa-${p.id}')">
-      ${avHtml(p,36,10)}<div class="rbody"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span class="rtitle">${p.name}${p.fav?' ⭐':''}</span>${catPill}${ageBadge}${nextLabel}</div><div class="rsub">${subParts.join(' · ')||'No dates added'}</div></div>
+      ${avHtml(p,36,10)}<div class="rbody"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span class="rtitle">${p.name}${p.fav?' ⭐':''}</span>${catPill}${ageBadge}${anBadge}${nextLabel}</div><div class="rsub">${subParts.join(' · ')||'No dates added'}</div></div>
       <svg id="pc-${p.id}" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;transition:transform .25s"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
     <div id="pa-${p.id}" style="display:none">${buildExpandedPanel(p)}</div>
@@ -1235,11 +1241,11 @@ function buildExpandedPanel(p){
   let dateRows='';
   if(p.dob){
     const dLabel=bdDays===0?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--gbg);color:var(--green);border:1px solid var(--gbd)">🎉 Today!</span>`:bdDays<=7?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25)">in ${bdDays}d</span>`:'';
-    dateRows+=`<div style="display:flex;align-items:center;gap:9px;padding:7px 0${p.anniv?';border-bottom:1px solid var(--bd2)':''}"><div style="width:28px;height:28px;border-radius:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem">🎂</div><div style="flex:1;min-width:0"><div style="font-size:.78rem;font-weight:700;color:var(--t1)">${fmtFull(p.dob)}</div><div style="font-size:.65rem;color:var(--t3);margin-top:1px">Birthday · Turns ${ageNext}</div></div>${dLabel}</div>`;
+    dateRows+=`<div style="display:flex;align-items:center;gap:9px;padding:7px 0${p.anniv?';border-bottom:1px solid var(--bd2)':''}"><div style="width:28px;height:28px;border-radius:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem">🎂</div><div style="flex:1;min-width:0"><div style="font-size:.78rem;font-weight:700;color:var(--t1)">${fmtFull(p.dob)}</div><div style="font-size:.65rem;color:var(--t3);margin-top:1px">Birthday · Turning ${ageNext} · ${(()=>{const d=parseDate(p.dob);const next=new Date(new Date().getFullYear(),d.getMonth(),d.getDate());if(next<new Date())next.setFullYear(next.getFullYear()+1);return next.toLocaleString('en-IN',{month:'short'})+' '+next.getFullYear();})()}</div></div>${dLabel}</div>`;
   }
   if(p.anniv){
     const aLabel=anDays===0?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--gbg);color:var(--green);border:1px solid var(--gbd)">🎉 Today!</span>`:anDays<=7?`<span style="font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25)">in ${anDays}d</span>`:'';
-    dateRows+=`<div style="display:flex;align-items:center;gap:9px;padding:7px 0"><div style="width:28px;height:28px;border-radius:8px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem">💍</div><div style="flex:1;min-width:0"><div style="font-size:.78rem;font-weight:700;color:var(--t1)">${fmtFull(p.anniv)}</div><div style="font-size:.65rem;color:var(--t3);margin-top:1px">Anniversary · ${yrsNext} yr${yrsNext!==1?'s':''} together</div></div>${aLabel}</div>`;
+    dateRows+=`<div style="display:flex;align-items:center;gap:9px;padding:7px 0"><div style="width:28px;height:28px;border-radius:8px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem">💍</div><div style="flex:1;min-width:0"><div style="font-size:.78rem;font-weight:700;color:var(--t1)">${fmtFull(p.anniv)}</div><div style="font-size:.65rem;color:var(--t3);margin-top:1px">Celebrating ${yrsNext} yr${yrsNext!==1?'s':''} together · ${(()=>{const d=parseDate(p.anniv);const next=new Date(new Date().getFullYear(),d.getMonth(),d.getDate());if(next<new Date())next.setFullYear(next.getFullYear()+1);return next.toLocaleString('en-IN',{month:'short'})+' '+next.getFullYear();})()}</div></div>${aLabel}</div>`;
   }
   if(!p.dob&&!p.anniv) dateRows=`<div style="font-size:.75rem;color:var(--t3);padding:8px 0;text-align:center">No dates added yet</div>`;
 
